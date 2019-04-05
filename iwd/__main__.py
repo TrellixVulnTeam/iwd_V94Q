@@ -22,13 +22,7 @@ def parse_args():
     parser.add_argument('cmake_args', nargs='*')
     args = parser.parse_args()
 
-    # TODO - This can be done more flexible with regex matching
-    # Allow -D inputs and throw nice exception when invalid syntax
-    def gen():
-        for arg in args.cmake_args:
-            x, y = arg.split('=')
-            yield x, y
-    return Configuration(gen())
+    return Configuration.from_arguments(args.cmake_args)
 
 
 class Directories:

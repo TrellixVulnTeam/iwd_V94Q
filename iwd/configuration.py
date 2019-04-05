@@ -22,3 +22,13 @@ class Configuration(UserDict):
 
     def as_cmake_args(self):
         return [make_cmake_arg(key, value) for key, value in self.data.items()]
+
+    @staticmethod
+    def from_arguments(arguments):
+        # TODO - This can be done more flexible with regex matching
+        # Allow -D inputs and throw nice exception when invalid syntax
+        def gen():
+            for arg in arguments:
+                x, y = arg.split('=')
+                yield x, y
+        return Configuration(gen())
