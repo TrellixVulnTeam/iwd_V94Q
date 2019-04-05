@@ -1,6 +1,7 @@
 import argparse
 import copy
 from .configuration import Configuration
+from .directories import Directories, makedirs
 import hashlib
 import json
 import logging
@@ -24,27 +25,12 @@ def parse_args():
     return Configuration.from_arguments(args.cmake_args)
 
 
-class Directories:
-    def __init__(self, working_directory):
-        self.cache = makedirs(working_directory, '.cache')
-        self.build = makedirs(working_directory, '.deps', 'build')
-        self.source = makedirs(working_directory, '.deps', 'source')
-        self.install = makedirs(
-            working_directory, '.deps', 'install')
-
-
 class Context:
     def __init__(self, directories, requirement, source_dir, configuration):
         self.directories = directories
         self.requirement = requirement
         self.source_dir = source_dir
         self.configuration = configuration
-
-
-def makedirs(*args):
-    path = os.path.join(*args)
-    os.makedirs(path, exist_ok=True)
-    return path
 
 
 def join_dictionaries(a: dict, b: dict):
