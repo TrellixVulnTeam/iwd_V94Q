@@ -1,5 +1,6 @@
 import argparse
 import copy
+from .configuration import Configuration
 import hashlib
 import json
 import logging
@@ -14,7 +15,6 @@ import urllib.request
 
 EXPRESSION_RULE = re.compile(
     r'\$\((?P<key>\w+)\)')
-ARGUMENT_REGEX = re.compile(r'\w+=[\w+/]')
 
 
 def parse_args():
@@ -28,7 +28,7 @@ def parse_args():
         for arg in args.cmake_args:
             x, y = arg.split('=')
             yield x, y
-    return dict(gen())
+    return Configuration(gen())
 
 
 class Directories:
@@ -77,7 +77,7 @@ def requirement_hash(requirement: Requirement):
     return requirement.get_hash().hexdigest()
 
 
-def create_cmake_args(configuration: dict, requirement: Requirement):
+def create_cmake_args(configuration: Configuration, requirement: Requirement):
     merged_args = join_dictionaries(
         requirement.configuration, configuration)
     # TODO - Use list comprehension
@@ -93,18 +93,12 @@ def create_cmake_args(configuration: dict, requirement: Requirement):
     return list(gen())
 
 
-def configuration_requirement_hash(requirement: Requirement, configuration: dict):
-    m = requirement.get_hash()
-    for k, v in configuration.items():
-        m.update(f'-D{k}={v}'.encode())
-    return m.hexdigest()
+def configuration_requirement_hash(requirement: Requirement, configuration: Configuration):
+    return configuration.get_hash(requirement.get_hash()).hexdigest()
 
 
-def configuration_hash(configuration: dict):
-    m = hashlib.sha256()
-    for k, v in configuration.items():
-        m.update(f'-D{k}={v}'.encode())
-    return m.hexdigest()
+def configuration_hash(configuration: Configuration):
+    return configuration.get_hash().hexdigest()
 
 
 def download_requirement(requirement: Requirement, directories: Directories):
