@@ -1,4 +1,5 @@
 import os
+import subprocess
 import tarfile
 import urllib.request
 import hashlib
@@ -26,10 +27,18 @@ class Requirement:
         return m
 
     def download(self, directories: Directories):
-        # TODO - Handle a case, where url points to git repository
         # TODO - Detect if tar contains only one folder, or packs sources without it
-        req_file = download_requirement(self, directories)
-        return untargz(req_file, directories.source)[0]
+        if self.url.endswith('.git'):
+            source_dir = os.path.join(
+                directories.source, f'{self.name}-{self.version}')
+            git_clone(self.url, source_dir, self.version)
+            return source_dir
+        elif self.url.endswith('.tar.gz'):
+            req_file = download_requirement(self, directories)
+            return untargz(req_file, directories.source)[0]
+        else:
+            raise Exception(
+                'Invalid url provided, must end with either .git, or .tar.gz')
 
 
 def untargz(targzfile_path: str, output_directory: str):
@@ -46,3 +55,11 @@ def download_requirement(requirement: Requirement, directories: Directories):
         urllib.request.urlretrieve(
             requirement.url, filename=download_file_path)
     return download_file_path
+
+
+def git_clone(url, target_directory, version):
+    if not os.path.isdir(target_directory):
+        subprocess.check_call([
+            'git', 'clone', '--depth', '1', '--recursive', '--branch', version,  url, str(
+                target_directory)
+        ])

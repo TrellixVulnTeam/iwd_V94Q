@@ -52,6 +52,11 @@ In order to use it:
                     "gRPC_BUILD_CSHARP_EXT": "ON",
                     "CMAKE_PREFIX_PATH": "$(CMAKE_INSTALL_PREFIX)"
                 }
+            },
+            {
+                "name" : "glm",
+                "version" : "0.9.9.5",
+                "url" : "https://github.com/g-truc/glm.git"
             }
         ]
     }
@@ -62,10 +67,11 @@ In order to use it:
 
 1. KeyValue pairs inside `configuration` are passed during cmake configuration step to target
 2. If value matches pattern `\$\(\w+\)`, the `\w+` part is replaced with configuration arguments provided during script invokation
-3. Url must point to tar.gz file
-4. `cmake_directory` is optional, and if provided should point to dir with CMakeLists.txt file, relative to source dir.
-5. Args should match the pattern `KEY=VALUE`, they are passed to every cmake configuration step 
-6. Args provided contribute to name of the directory inside .deps/install, which is unique for every configuration
+3. Url must point to tar.gz file or git repository
+4. If url points to git repository, the repository must contain a branch or tag matching the version.
+5. `cmake_directory` is optional, and if provided should point to dir with CMakeLists.txt file, relative to source dir.
+6. Args should match the pattern `KEY=VALUE`, they are passed to every cmake configuration step 
+7. Args provided contribute to name of the directory inside .deps/install, which is unique for every configuration
 
 
 ## Roadmap 
