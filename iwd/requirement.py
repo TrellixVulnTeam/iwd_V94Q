@@ -1,4 +1,5 @@
 import os
+import hashlib
 
 
 class Requirement:
@@ -13,3 +14,10 @@ class Requirement:
         if self.cmake_directory is not None:
             return os.path.join(source_directory_org, self.cmake_directory)
         return source_directory_org
+
+    def get_hash(self, hash_obj=None):
+        m = hashlib.sha256() if hash_obj is None else hash_obj
+        m.update(self.name.encode())
+        m.update(self.url.encode())
+        m.update(self.version.encode())
+        return m

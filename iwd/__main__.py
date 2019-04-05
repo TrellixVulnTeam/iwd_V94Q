@@ -74,11 +74,7 @@ def untargz(targzfile_path: str, output_directory: str):
 
 
 def requirement_hash(requirement: Requirement):
-    m = hashlib.sha256()
-    m.update(requirement.name.encode())
-    m.update(requirement.url.encode())
-    m.update(requirement.version.encode())
-    return m.hexdigest()
+    return requirement.get_hash().hexdigest()
 
 
 def create_cmake_args(configuration: dict, requirement: Requirement):
@@ -98,10 +94,7 @@ def create_cmake_args(configuration: dict, requirement: Requirement):
 
 
 def configuration_requirement_hash(requirement: Requirement, configuration: dict):
-    m = hashlib.sha256()
-    m.update(requirement.name.encode())
-    m.update(requirement.url.encode())
-    m.update(requirement.version.encode())
+    m = requirement.get_hash()
     for k, v in configuration.items():
         m.update(f'-D{k}={v}'.encode())
     return m.hexdigest()
