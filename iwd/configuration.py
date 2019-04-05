@@ -3,7 +3,7 @@ import hashlib
 import re
 
 
-ARGUMENT_REGEX = re.compile(r'\w+=[\w+/]')
+ARGUMENT_REGEX = re.compile(r'(-D)?(?P<key>\w+)=(?P<value>[\w/]+)')
 
 
 def make_cmake_arg(key, value):
@@ -25,10 +25,13 @@ class Configuration(UserDict):
 
     @staticmethod
     def from_arguments(arguments):
-        # TODO - This can be done more flexible with regex matching
-        # Allow -D inputs and throw nice exception when invalid syntax
-        def gen():
-            for arg in arguments:
-                x, y = arg.split('=')
-                yield x, y
-        return Configuration(gen())
+        result = Configuration(None)
+        for argument in arguments:
+            match = ARGUMENT_REGEX.match(argument)
+            if match is None:
+                raise Exception(
+                    "Invalid cmake argument passed `" + argument + "`")
+            else:
+                groups = match.groupdict()
+                result[groups['key']] = groups['value']
+        return result

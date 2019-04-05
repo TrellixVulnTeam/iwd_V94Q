@@ -21,7 +21,6 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('cmake_args', nargs='*')
     args = parser.parse_args()
-
     return Configuration.from_arguments(args.cmake_args)
 
 
