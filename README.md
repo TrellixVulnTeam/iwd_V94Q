@@ -78,22 +78,26 @@ In order to use it:
 
 1. Fix all todos in the project
 ```
-# TODO - This can be done more flexible with regex matching
-# TODO - Create and validate schema
-# TODO - Use list comprehension
-# TODO - This should allow for text modification, i.e. usage of $(VALUE)/hardcoded
-# TODO - When possible, this should print nice download status
-# TODO - Use logging
-# TODO - Handle windows case, when there is need to avoid multiconfig generator
-# TODO - Store the install_prefix, and configuration info in some nice readable text file
+TODO - Detect if tar contains only one folder, or packs sources without it
+TODO - When possible, this should print nice download status
+TODO - Create and validate schema
+TODO - Use logging
+TODO - Handle windows case, when there is need to avoid multiconfig generator
+TODO - Store the install_prefix, and configuration info in some nice readable text file
 ```
-2. Allow to pull git repositories, not just source packages
-3. Better cmake integration 
+3. Better cmake integration - generate an include file  
 4. Allow the user to define directories, where to install stuff 
-
+5. Add a tool to inspect/clean build packages 
+6. Add support for binary packages 
+7. Add support for platform-specific configurations
+8. Add support for copying files from source dir to install dir 
+9. Allow user to override environment during iwd runtime.
+ 
 ## Future considerations 
 
 1. Add plain makefile project support 
+2. Allow to package the install directory for specific configuration/requirements.
+3. Allow custom configuration/build/install steps.
 
 
 
