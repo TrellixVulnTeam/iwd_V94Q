@@ -7,7 +7,7 @@ import json
 import logging
 import os
 import re
-from .requirement import Requirement
+from .requirement import Requirement, download_and_extract
 import subprocess
 import tarfile
 import tempfile
@@ -46,33 +46,12 @@ def parse_requirements(requirements_file_path: str):
         return [Requirement(**x) for x in data['requirements']]
 
 
-def untargz(targzfile_path: str, output_directory: str):
-    with tarfile.open(targzfile_path, 'r:gz') as tar:
-        tar.extractall(path=output_directory)
-        return [os.path.join(output_directory, x.name) for x in tar.getmembers()]
-
-
 def create_cmake_args(configuration: Configuration, requirement: Requirement):
     return configuration.as_cmake_args() + Configuration(requirement.configuration).as_cmake_args()
 
 
 def configuration_requirement_hash(requirement: Requirement, configuration: Configuration):
     return configuration.get_hash(requirement.get_hash()).hexdigest()
-
-
-def download_requirement(requirement: Requirement, directories: Directories):
-    name = requirement.get_hash().hexdigest()
-    download_file_path = os.path.join(directories.cache, name)
-    if not os.path.isfile(download_file_path):
-        # TODO - When possible, this should print nice download status
-        urllib.request.urlretrieve(
-            requirement.url, filename=download_file_path)
-    return download_file_path
-
-
-def download_and_extract(requirement: Requirement, directories: Directories):
-    req_file = download_requirement(requirement, directories)
-    return untargz(req_file, directories.source)[0]
 
 
 def subprocess_call(args):

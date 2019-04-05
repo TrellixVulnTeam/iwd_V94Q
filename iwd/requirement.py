@@ -1,5 +1,8 @@
 import os
+import tarfile
+import urllib.request
 import hashlib
+from .directories import Directories
 
 
 class Requirement:
@@ -21,3 +24,24 @@ class Requirement:
         m.update(self.url.encode())
         m.update(self.version.encode())
         return m
+
+
+def untargz(targzfile_path: str, output_directory: str):
+    with tarfile.open(targzfile_path, 'r:gz') as tar:
+        tar.extractall(path=output_directory)
+        return [os.path.join(output_directory, x.name) for x in tar.getmembers()]
+
+
+def download_requirement(requirement: Requirement, directories: Directories):
+    name = requirement.get_hash().hexdigest()
+    download_file_path = os.path.join(directories.cache, name)
+    if not os.path.isfile(download_file_path):
+        # TODO - When possible, this should print nice download status
+        urllib.request.urlretrieve(
+            requirement.url, filename=download_file_path)
+    return download_file_path
+
+
+def download_and_extract(requirement: Requirement, directories: Directories):
+    req_file = download_requirement(requirement, directories)
+    return untargz(req_file, directories.source)[0]
