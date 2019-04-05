@@ -25,6 +25,12 @@ class Requirement:
         m.update(self.version.encode())
         return m
 
+    def download(self, directories: Directories):
+        # TODO - Handle a case, where url points to git repository
+        # TODO - Detect if tar contains only one folder, or packs sources without it
+        req_file = download_requirement(self, directories)
+        return untargz(req_file, directories.source)[0]
+
 
 def untargz(targzfile_path: str, output_directory: str):
     with tarfile.open(targzfile_path, 'r:gz') as tar:
@@ -40,8 +46,3 @@ def download_requirement(requirement: Requirement, directories: Directories):
         urllib.request.urlretrieve(
             requirement.url, filename=download_file_path)
     return download_file_path
-
-
-def download_and_extract(requirement: Requirement, directories: Directories):
-    req_file = download_requirement(requirement, directories)
-    return untargz(req_file, directories.source)[0]

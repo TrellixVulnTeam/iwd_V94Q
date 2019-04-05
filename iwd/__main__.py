@@ -7,7 +7,7 @@ import json
 import logging
 import os
 import re
-from .requirement import Requirement, download_and_extract
+from .requirement import Requirement
 import subprocess
 import tarfile
 import tempfile
@@ -98,8 +98,7 @@ def main():
     configuration['CMAKE_INSTALL_PREFIX'] = install_prefix
 
     for requirement in requirements:
-        source_directory = download_and_extract(
-            requirement, directories)
+        source_directory = requirement.download(directories)
         cmake(configuration, requirement,
               directories, source_directory)
 
