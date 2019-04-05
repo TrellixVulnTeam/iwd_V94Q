@@ -120,7 +120,7 @@ def configuration_requirement_hash(requirement: Requirement, configuration: dict
     return m.hexdigest()
 
 
-def configuration_hash(configuration):
+def configuration_hash(configuration: dict):
     m = hashlib.sha256()
     for k, v in configuration.items():
         m.update(f'-D{k}={v}'.encode())
