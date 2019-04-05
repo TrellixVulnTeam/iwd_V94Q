@@ -74,10 +74,6 @@ def configuration_requirement_hash(requirement: Requirement, configuration: Conf
     return configuration.get_hash(requirement.get_hash()).hexdigest()
 
 
-def configuration_hash(configuration: Configuration):
-    return configuration.get_hash().hexdigest()
-
-
 def download_requirement(requirement: Requirement, directories: Directories):
     name = requirement.get_hash().hexdigest()
     download_file_path = os.path.join(directories.cache, name)
@@ -117,7 +113,7 @@ def cmake(configuration: dict, requirement: Requirement, directories: Directorie
 
 def main():
     configuration = parse_args()
-    install_directory_name = configuration_hash(configuration)
+    install_directory_name = configuration.get_hash().hexdigest()
     directories = Directories(os.getcwd())
 
     requirements = parse_requirements('requirements.txt')
