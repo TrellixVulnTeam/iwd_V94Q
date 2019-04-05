@@ -95,6 +95,14 @@ def subprocess_call(args):
     subprocess.check_call(args)
 
 
+def dump_build_info(configuration: Configuration, requirement: Requirement, build_dir: str, install_directory_hash: str):
+    with open(os.path.join(build_dir, 'iwd-build-info.json'), 'w') as f:
+        json.dump({
+            'user-configuration': configuration.data,
+            'requirement': requirement.__dict__
+        }, f, indent=4)
+
+
 def cmake(configuration: dict, requirement: Requirement, directories: Directories, source_dir: str):
     config_req_hash = configuration_requirement_hash(
         requirement, configuration)
@@ -109,6 +117,7 @@ def cmake(configuration: dict, requirement: Requirement, directories: Directorie
     ]
     subprocess_call(cmake_call_base + cmake_args)
     subprocess_call(['cmake', '--build', build_dir, '--target', 'install'])
+    dump_build_info(configuration, requirement, build_dir, config_req_hash)
 
 
 def main():

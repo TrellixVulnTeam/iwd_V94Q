@@ -1,7 +1,7 @@
 
 from setuptools import setup
 setup(name='iwd',
-      version='1.0.0-alpha03',
+      version='1.0.0-alpha04',
       packages=['iwd'],
       entry_points={
           'console_scripts': [
