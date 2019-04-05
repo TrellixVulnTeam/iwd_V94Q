@@ -66,10 +66,6 @@ def untargz(targzfile_path: str, output_directory: str):
         return [os.path.join(output_directory, x.name) for x in tar.getmembers()]
 
 
-def requirement_hash(requirement: Requirement):
-    return requirement.get_hash().hexdigest()
-
-
 def create_cmake_args(configuration: Configuration, requirement: Requirement):
     return configuration.as_cmake_args() + Configuration(requirement.configuration).as_cmake_args()
 
@@ -83,7 +79,7 @@ def configuration_hash(configuration: Configuration):
 
 
 def download_requirement(requirement: Requirement, directories: Directories):
-    name = requirement_hash(requirement)
+    name = requirement.get_hash().hexdigest()
     download_file_path = os.path.join(directories.cache, name)
     if not os.path.isfile(download_file_path):
         # TODO - When possible, this should print nice download status
