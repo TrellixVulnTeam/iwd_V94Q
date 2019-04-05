@@ -15,3 +15,6 @@ class Configuration(UserDict):
         for k, v in self.data.items():
             m.update(f'-D{k}={v}'.encode())
         return m
+
+    def as_cmake_args(self):
+        return [f'-D{key}={value}' for key, value in self.data.items()]

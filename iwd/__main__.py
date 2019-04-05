@@ -78,19 +78,7 @@ def requirement_hash(requirement: Requirement):
 
 
 def create_cmake_args(configuration: Configuration, requirement: Requirement):
-    merged_args = join_dictionaries(
-        requirement.configuration, configuration)
-    # TODO - Use list comprehension
-
-    def gen():
-        for key, value in merged_args.items():
-            match = EXPRESSION_RULE.match(value)
-            # TODO - This should allow for text modification, i.e. usage of $(VALUE)/hardcoded
-            if match is not None:
-                value = configuration[match.groupdict()['key']]
-            yield f'-D{key}={value}'
-
-    return list(gen())
+    return configuration.as_cmake_args() + Configuration(requirement.configuration).as_cmake_args()
 
 
 def configuration_requirement_hash(requirement: Requirement, configuration: Configuration):
