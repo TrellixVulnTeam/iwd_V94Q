@@ -41,9 +41,18 @@ def parse_requirements(requirements_file_path: str):
         return [Requirement(**x) for x in data['requirements']]
 
 
+def make_install_id(requirements_file_path, configuration: Configuration):
+    m = hashlib.sha256()
+    with open(requirements_file_path, 'rb') as f:
+        m.update(f.read())
+    configuration.get_hash(m)
+    return m.hexdigest()
+
+
 def main():
     configuration = parse_args()
-    install_directory_name = configuration.get_hash().hexdigest()
+    install_directory_name = make_install_id(
+        'requirements.txt', configuration)
     directories = Directories(os.getcwd())
 
     requirements = parse_requirements('requirements.txt')
