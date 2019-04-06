@@ -30,11 +30,6 @@ class Requirement:
         self.cmake_directory = optional_argument(
             'cmake_directory', kwargs, None)
 
-    def override_source_directory(self, source_directory_org):
-        if self.cmake_directory is not None:
-            return os.path.join(source_directory_org, self.cmake_directory)
-        return source_directory_org
-
     def get_hash(self, hash_obj=None):
         m = hashlib.sha256() if hash_obj is None else hash_obj
         m.update(self.name.encode())
@@ -43,8 +38,8 @@ class Requirement:
         return m
 
     def install(self, configuration: Configuration, directories: Directories, install_directory: str):
-        source_dir = self.override_source_directory(
-            download(self, directories))
+        source_dir = override_source_directory(
+            self, download(self, directories))
         build_id = configuration.get_hash(self.get_hash()).hexdigest()
         build_dir = directories.make_build_directory(build_id)
         cmake_args = self.configuration.as_cmake_args() + configuration.as_cmake_args()
@@ -54,6 +49,12 @@ class Requirement:
         subprocess.check_call(
             ['cmake', '--build', build_dir, '--target', 'install'])
         dump_build_info(configuration, self, build_dir, install_directory)
+
+
+def override_source_directory(requirement: Requirement, source_directory: str):
+    if requirement.cmake_directory is not None:
+        return os.path.join(source_directory, requirement.cmake_directory)
+    return source_directory
 
 
 def download(requirement: Requirement, directories: Directories):
