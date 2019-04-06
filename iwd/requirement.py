@@ -1,3 +1,4 @@
+from .configuration import Configuration
 import os
 import subprocess
 import tarfile
@@ -23,7 +24,8 @@ class Requirement:
         self.name = required_argument('name', kwargs)
         self.version = required_argument('version', kwargs)
         self.url = required_argument('url', kwargs)
-        self.configuration = optional_argument('configuration', kwargs, {})
+        self.configuration = Configuration(
+            optional_argument('configuration', kwargs, {}))
         self.cmake_directory = optional_argument(
             'cmake_directory', kwargs, None)
 

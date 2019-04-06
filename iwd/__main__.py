@@ -42,7 +42,7 @@ def parse_requirements(requirements_file_path: str):
 
 
 def create_cmake_args(configuration: Configuration, requirement: Requirement):
-    return configuration.as_cmake_args() + Configuration(requirement.configuration).as_cmake_args()
+    return configuration.as_cmake_args() + requirement.configuration.as_cmake_args()
 
 
 def configuration_requirement_hash(requirement: Requirement, configuration: Configuration):
