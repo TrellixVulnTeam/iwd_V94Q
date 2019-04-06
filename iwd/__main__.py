@@ -41,45 +41,6 @@ def parse_requirements(requirements_file_path: str):
         return [Requirement(**x) for x in data['requirements']]
 
 
-def create_cmake_args(configuration: Configuration, requirement: Requirement):
-    return configuration.as_cmake_args() + requirement.configuration.as_cmake_args()
-
-
-def configuration_requirement_hash(requirement: Requirement, configuration: Configuration):
-    return configuration.get_hash(requirement.get_hash()).hexdigest()
-
-
-def subprocess_call(args):
-    # TODO - Use logging
-    print('-- Calling ' + ' '.join(args))
-    subprocess.check_call(args)
-
-
-def dump_build_info(configuration: Configuration, requirement: Requirement, build_dir: str, install_directory_hash: str):
-    with open(os.path.join(build_dir, 'iwd-build-info.json'), 'w') as f:
-        json.dump({
-            'user-configuration': configuration,
-            'requirement': requirement
-        }, f, indent=4, cls=JsonEncoder)
-
-
-def cmake(configuration: dict, requirement: Requirement, directories: Directories, source_dir: str):
-    config_req_hash = configuration_requirement_hash(
-        requirement, configuration)
-    build_dir = makedirs(directories.build, config_req_hash)
-
-    cmake_args = create_cmake_args(configuration, requirement)
-    source_directory = requirement.override_source_directory(
-        source_dir)
-    # TODO - Handle windows case, when there is need to avoid multiconfig generator
-    cmake_call_base = [
-        'cmake', '-S', source_directory, '-B', build_dir
-    ]
-    subprocess_call(cmake_call_base + cmake_args)
-    subprocess_call(['cmake', '--build', build_dir, '--target', 'install'])
-    dump_build_info(configuration, requirement, build_dir, config_req_hash)
-
-
 def main():
     configuration = parse_args()
     install_directory_name = configuration.get_hash().hexdigest()
@@ -93,9 +54,8 @@ def main():
     configuration['CMAKE_INSTALL_PREFIX'] = install_prefix
 
     for requirement in requirements:
-        source_directory = requirement.download(directories)
-        cmake(configuration, requirement,
-              directories, source_directory)
+        requirement.install(
+            configuration, directories, install_prefix)
 
     print(
         f'--Done! Use -DCMAKE_PREFIX_PATH={install_prefix} while configuring your project')

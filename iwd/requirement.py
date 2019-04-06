@@ -1,4 +1,5 @@
 from .configuration import Configuration
+import json
 import os
 import subprocess
 import tarfile
@@ -55,6 +56,18 @@ class Requirement:
             raise Exception(
                 'Invalid url provided, must end with either .git, or .tar.gz')
 
+    def install(self, configuration: Configuration, directories: Directories, install_directory: str):
+        source_dir = self.override_source_directory(self.download(directories))
+        build_id = configuration.get_hash(self.get_hash()).hexdigest()
+        build_dir = directories.make_build_directory(build_id)
+        cmake_args = self.configuration.as_cmake_args() + configuration.as_cmake_args()
+        # TODO - Handle windows case, when there is need to avoid multiconfig generator
+        cmake_call_base = ['cmake', '-S', source_dir, '-B', build_dir]
+        subprocess.check_call(cmake_call_base + cmake_args)
+        subprocess.check_call(
+            ['cmake', '--build', build_dir, '--target', 'install'])
+        dump_build_info(configuration, self, build_dir, install_directory)
+
 
 def untargz(targzfile_path: str, output_directory: str):
     with tarfile.open(targzfile_path, 'r:gz') as tar:
@@ -78,3 +91,12 @@ def git_clone(url, target_directory, version):
             'git', 'clone', '--depth', '1', '--recursive', '--branch', version,  url, str(
                 target_directory)
         ])
+
+
+def dump_build_info(configuration: Configuration, requirement: Requirement, build_dir: str, install_directory_hash: str):
+    from .json_encoder import JsonEncoder
+    with open(os.path.join(build_dir, 'iwd-build-info.json'), 'w') as f:
+        json.dump({
+            'user-configuration': configuration,
+            'requirement': requirement
+        }, f, indent=4, cls=JsonEncoder)
