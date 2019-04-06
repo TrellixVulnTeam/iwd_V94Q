@@ -42,22 +42,9 @@ class Requirement:
         m.update(self.version.encode())
         return m
 
-    def download(self, directories: Directories):
-        # TODO - Detect if tar contains only one folder, or packs sources without it
-        if self.url.endswith('.git'):
-            source_dir = os.path.join(
-                directories.source, f'{self.name}-{self.version}')
-            git_clone(self.url, source_dir, self.version)
-            return source_dir
-        elif self.url.endswith('.tar.gz'):
-            req_file = download_requirement(self, directories)
-            return untargz(req_file, directories.source)[0]
-        else:
-            raise Exception(
-                'Invalid url provided, must end with either .git, or .tar.gz')
-
     def install(self, configuration: Configuration, directories: Directories, install_directory: str):
-        source_dir = self.override_source_directory(self.download(directories))
+        source_dir = self.override_source_directory(
+            download(self, directories))
         build_id = configuration.get_hash(self.get_hash()).hexdigest()
         build_dir = directories.make_build_directory(build_id)
         cmake_args = self.configuration.as_cmake_args() + configuration.as_cmake_args()
@@ -67,6 +54,21 @@ class Requirement:
         subprocess.check_call(
             ['cmake', '--build', build_dir, '--target', 'install'])
         dump_build_info(configuration, self, build_dir, install_directory)
+
+
+def download(requirement: Requirement, directories: Directories):
+     # TODO - Detect if tar contains only one folder, or packs sources without it
+    if requirement.url.endswith('.git'):
+        source_dir = os.path.join(
+            directories.source, f'{requirement.name}-{requirement.version}')
+        git_clone(requirement.url, source_dir, requirement.version)
+        return source_dir
+    elif requirement.url.endswith('.tar.gz'):
+        req_file = download_requirement(requirement, directories)
+        return untargz(req_file, directories.source)[0]
+    else:
+        raise Exception(
+            'Invalid url provided, must end with either .git, or .tar.gz')
 
 
 def untargz(targzfile_path: str, output_directory: str):
