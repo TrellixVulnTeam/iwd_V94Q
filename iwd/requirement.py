@@ -6,13 +6,26 @@ import hashlib
 from .directories import Directories
 
 
+def required_argument(name, dictlike):
+    if name not in dictlike.keys():
+        raise Exception(f'Missing required argument {name}')
+    return dictlike[name]
+
+
+def optional_argument(name, dictlike, default=None):
+    if name not in dictlike.keys():
+        return default
+    return dictlike[name]
+
+
 class Requirement:
-    def __init__(self, name, version, url, configuration={}, cmake_directory=None):
-        self.name = name
-        self.version = version
-        self.url = url
-        self.configuration = configuration
-        self.cmake_directory = cmake_directory
+    def __init__(self, **kwargs):
+        self.name = required_argument('name', kwargs)
+        self.version = required_argument('version', kwargs)
+        self.url = required_argument('url', kwargs)
+        self.configuration = optional_argument('configuration', kwargs, {})
+        self.cmake_directory = optional_argument(
+            'cmake_directory', kwargs, None)
 
     def override_source_directory(self, source_directory_org):
         if self.cmake_directory is not None:
