@@ -33,12 +33,6 @@ class Context:
         self.configuration = configuration
 
 
-def join_dictionaries(a: dict, b: dict):
-    result = copy.copy(a)
-    result.update(b)
-    return result
-
-
 def parse_requirements(requirements_file_path: str):
     with open(requirements_file_path, 'r') as f:
         data = json.load(f)
