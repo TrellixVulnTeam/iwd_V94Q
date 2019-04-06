@@ -4,6 +4,7 @@ from .configuration import Configuration
 from .directories import Directories, makedirs
 import hashlib
 import json
+from .json_encoder import JsonEncoder
 import logging
 import os
 import re
@@ -57,9 +58,9 @@ def subprocess_call(args):
 def dump_build_info(configuration: Configuration, requirement: Requirement, build_dir: str, install_directory_hash: str):
     with open(os.path.join(build_dir, 'iwd-build-info.json'), 'w') as f:
         json.dump({
-            'user-configuration': configuration.data,
-            'requirement': requirement.__dict__
-        }, f, indent=4)
+            'user-configuration': configuration,
+            'requirement': requirement
+        }, f, indent=4, cls=JsonEncoder)
 
 
 def cmake(configuration: dict, requirement: Requirement, directories: Directories, source_dir: str):
