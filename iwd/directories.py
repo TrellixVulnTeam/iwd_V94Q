@@ -14,3 +14,6 @@ class Directories:
         self.source = makedirs(working_directory, '.deps', 'source')
         self.install = makedirs(
             working_directory, '.deps', 'install')
+
+    def make_build_directory(self, build_id: str):
+        return makedirs(self.build, build_id)
