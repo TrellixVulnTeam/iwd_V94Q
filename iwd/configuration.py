@@ -21,16 +21,10 @@ class Configuration(UserDict):
 
     def resolve_variables(self, parent):
         for k, v in self.data.items():
-            result = v
-            while True:
-                match = EXPRESSION_RULE.search(result)
-                if match is None:
-                    break
-                value = match.groupdict()['key']
-                # TODO - Handle key missing exception
-                result = result[:match.pos] + \
-                    parent[value] + result[match.endpos:]
-            self.data[k] = result
+            def subimpl(matchobj):
+                value = matchobj.groupdict()['key']
+                return parent[value]
+            self.data[k] = EXPRESSION_RULE.sub(subimpl, v)
 
     @staticmethod
     def from_arguments(arguments):
