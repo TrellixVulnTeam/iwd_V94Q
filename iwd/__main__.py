@@ -29,33 +29,20 @@ def parse_requirements(requirements_file_path: str):
         return [Requirement(**x) for x in data['requirements']]
 
 
-def make_install_id(requirements_file_path, configuration: Configuration):
-    m = hashlib.sha256()
-    with open(requirements_file_path, 'rb') as f:
-        m.update(f.read())
-    configuration.get_hash(m)
-    return m.hexdigest()
-
-
 def main():
     configuration = parse_args()
-    install_directory_name = make_install_id(
-        'requirements.txt', configuration)
     directories = Directories(os.getcwd())
-
     requirements = parse_requirements('requirements.txt')
-    install_prefix = os.path.join(
-        directories.install, install_directory_name)
     # TODO - Store the install_prefix, and configuration info in some nice readable text file
     # for future usage
-    configuration['CMAKE_INSTALL_PREFIX'] = install_prefix
+    configuration['CMAKE_INSTALL_PREFIX'] = directories.install
 
     for requirement in requirements:
         requirement.install(
-            configuration, directories, install_prefix)
+            configuration, directories)
 
     print(
-        f'--Done! Use -DCMAKE_PREFIX_PATH={install_prefix} while configuring your project')
+        f'--Done! Use -DCMAKE_PREFIX_PATH={directories.install} while configuring your project')
 
 
 if __name__ == '__main__':
