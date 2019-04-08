@@ -4,6 +4,8 @@ import re
 
 
 ARGUMENT_REGEX = re.compile(r'(-D)?(?P<key>\w+)=(?P<value>[\w/]+)')
+EXPRESSION_RULE = re.compile(
+    r'\$\((?P<key>\w+)\)')
 
 
 def make_cmake_arg(key, value):

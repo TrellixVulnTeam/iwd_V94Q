@@ -15,10 +15,6 @@ import tempfile
 import urllib.request
 
 
-EXPRESSION_RULE = re.compile(
-    r'\$\((?P<key>\w+)\)')
-
-
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('cmake_args', nargs='*')
