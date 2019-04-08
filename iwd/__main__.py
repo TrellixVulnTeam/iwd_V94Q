@@ -23,7 +23,8 @@ set(CMAKE_PREFIX_PATH {INSTALL_PREFIX})
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-B', '--build-dir', default=os.getcwd())
+    parser.add_argument('-B', '--build-dir',
+                        default=os.path.join(os.getcwd(), 'build'))
     parser.add_argument('cmake_args', nargs='*')
     args = parser.parse_args()
     return args, Configuration.from_arguments(args.cmake_args)
@@ -44,7 +45,7 @@ def write_cmake_file(directories):
 def main():
     args, configuration = parse_args()
     directories = Directories(args.build_dir)
-    requirements = parse_requirements('requirements.txt')
+    requirements = parse_requirements('iwd.json')
     configuration['CMAKE_INSTALL_PREFIX'] = directories.install
 
     for requirement in requirements:
