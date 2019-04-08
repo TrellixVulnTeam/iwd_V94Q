@@ -20,6 +20,10 @@ def optional_argument(name, dictlike, default=None):
     return dictlike[name]
 
 
+def name_version(requirement):
+    return f'{requirement.name}-{requirement.version}'
+
+
 class Requirement:
     def __init__(self, **kwargs):
         self.name = required_argument('name', kwargs)
@@ -37,18 +41,18 @@ class Requirement:
         m.update(self.version.encode())
         return m
 
-    def install(self, configuration: Configuration, directories: Directories, install_directory: str):
+    def install(self, configuration: Configuration, directories: Directories):
+        self.configuration.resolve_variables(configuration)
         source_dir = override_source_directory(
             self, download(self, directories))
-        build_id = configuration.get_hash(self.get_hash()).hexdigest()
-        build_dir = directories.make_build_directory(build_id)
+        build_dir = directories.make_build_directory(name_version(self))
         cmake_args = self.configuration.as_cmake_args() + configuration.as_cmake_args()
         # TODO - Handle windows case, when there is need to avoid multiconfig generator
         cmake_call_base = ['cmake', '-S', source_dir, '-B', build_dir]
         subprocess.check_call(cmake_call_base + cmake_args)
         subprocess.check_call(
             ['cmake', '--build', build_dir, '--target', 'install'])
-        dump_build_info(configuration, self, build_dir, install_directory)
+        dump_build_info(configuration, self, build_dir, directories.install)
 
 
 def override_source_directory(requirement: Requirement, source_directory: str):

@@ -17,9 +17,10 @@ import urllib.request
 
 def parse_args():
     parser = argparse.ArgumentParser()
+    parser.add_argument('-B', '--build-dir', default=os.getcwd())
     parser.add_argument('cmake_args', nargs='*')
     args = parser.parse_args()
-    return Configuration.from_arguments(args.cmake_args)
+    return args, Configuration.from_arguments(args.cmake_args)
 
 
 def parse_requirements(requirements_file_path: str):
@@ -30,8 +31,8 @@ def parse_requirements(requirements_file_path: str):
 
 
 def main():
-    configuration = parse_args()
-    directories = Directories(os.getcwd())
+    args, configuration = parse_args()
+    directories = Directories(args.build_dir)
     requirements = parse_requirements('requirements.txt')
     # TODO - Store the install_prefix, and configuration info in some nice readable text file
     # for future usage
