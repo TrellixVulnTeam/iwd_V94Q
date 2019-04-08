@@ -1,13 +1,76 @@
 # IWD - I Want Deps 
 
+## Intro 
+
 iwd is a simple tool that allows user to specify and install requirements for c++ projects.
+It means to solve an issue, where user wants to quickstar a project, to check if doing something is viable.
 It relies on cmake, to configure, build, and install dependencies defined in json file.
+
+IWD is *NOT* a fully-fledged package manager, and it is not intended to be used this way.
+If you want more flexibility and features, i recommend to use [conan](https://conan.io/).
+
+### Why not just use cmake ExternalProject/FetchContent tools 
+
+1. ExternalProject does not satisfy dependencies during pre-configure/configure stage.
+2. FetchContent requires the user to call add_subdirectory, which can interact with your desired settings.
+
+IWD provides isolation of builds and allows the user to write cmake file with assumption that all 
+dependencies are already installed.
+
+### Why not just use conan 
+
+Writing conan recepies takes time, if they are not provided by the community.
+I would recommend writing a recepie, but handling its creation is time consuming, and sometimes you just do not have it.
+
+### Why not just use XXX 
+
+I have worked with plenty of the packaging tools: vcpkg, hunter to name some.
+I found none of them as quick in usage as just downloading source code, and building it:
+sometimes some of the libraries I wanted to use were missing, sometimes the configuration was not to my liking, and sometimes
+version was not up to date. The configuration of tool to handle downloading packages for me was time consuming, and often
+I found myself doing same thing over, and over - downloading from source and building it myself. 
+
+### Why use iwd 
+
+0. Speed of configuration.
+1. You provide explicitly all of the dependencies you want to build.
+2. You do not force others to use this solution at all (CMake will still find library if installed properly in the system).
+3. You have nice list of dependencies used in the project which can be consumed by other programs/package creators.
+4. Easily override settings, without disturbing requirements file.
+
+### Notice 
+Please keep in mind, that IWD works only when libraries you want to use, have proper CMakeLists 
+defined.
+
+## How it works 
+
+For each requirement specified in this way:
+```json
+{
+    "name": "zlib",
+    "version": "1.2.11",
+    "url": "https://github.com/madler/zlib/archive/v1.2.11.tar.gz",
+    "configuration": {}
+}
+```
+The script:
+1. Downloads source at given url (may be git repository, or tar.gz file url) and extracts it if necessary.
+2. Calls `cmake -S {source_dir} -B {build_dir} [-D{configuration}...]` 
+Where `configuration` are arguments provided in configuration property of object, updated with cmd line provided args.
+3. Calls `cmake --build {build_dir}`
+4. Calls `cmake --install`
+
+Additionally in `configuration` user may provide special variables with following schema 
+`$(VARIABLE_NAME)`. They are later overridden with global configuration args provided when invoking 
+`iwd`. More about that is described in `Important` section.
+
+## Usage
 
 In order to use it:
 
 1. Ensure you have cmake, python3.7+, some c++ toolchain installed
-2. clone the repo, call python setup.py 
-3. Go to your project, and create a requirements.txt file, with json content:
+2. Clone the repository, call python setup.py 
+3. Go to your project, and create a `iwd.json` file, with similar content:
 ```json
     {
         "requirements": [
@@ -61,7 +124,10 @@ In order to use it:
         ]
     }
 ```
-4. In same directory call `iwd [ARGS]`
+4. In same directory call `iwd [-B build_dir] [ARGS]`  
+The args must be defined in `KEY=VALUE` schema, they are then passed to configure step for each package.  
+The build dir(by default `build`) can be used to override the build directory, in which sources will be downloaded, build and
+installed.
 
 ## Important
 
@@ -85,13 +151,10 @@ TODO - Use logging
 TODO - Handle windows case, when there is need to avoid multiconfig generator
 TODO - Store the install_prefix, and configuration info in some nice readable text file
 ```
-3. Better cmake integration - generate an include file  
-4. Allow the user to define directories, where to install stuff 
-5. Add a tool to inspect/clean build packages 
-6. Add support for binary packages 
-7. Add support for platform-specific configurations
-8. Add support for copying files from source dir to install dir 
-9. Allow user to override environment during iwd runtime.
+2. Add a tool to inspect/clean build packages 
+3. Add support for binary packages 
+4. Add support for platform-specific configurations
+5. Add support for copying files from source dir to install dir 
  
 ## Future considerations 
 
