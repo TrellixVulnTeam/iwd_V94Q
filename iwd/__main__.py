@@ -34,8 +34,6 @@ def main():
     args, configuration = parse_args()
     directories = Directories(args.build_dir)
     requirements = parse_requirements('requirements.txt')
-    # TODO - Store the install_prefix, and configuration info in some nice readable text file
-    # for future usage
     configuration['CMAKE_INSTALL_PREFIX'] = directories.install
 
     for requirement in requirements:
