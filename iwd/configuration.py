@@ -25,6 +25,19 @@ class Configuration(UserDict):
     def as_cmake_args(self):
         return [make_cmake_arg(key, value) for key, value in self.data.items()]
 
+    def resolve_variables(self, parent):
+        for k, v in self.data.items():
+            result = v
+            while True:
+                match = EXPRESSION_RULE.search(result)
+                if match is None:
+                    break
+                value = match.groupdict()['key']
+                # TODO - Handle key missing exception
+                result = result[:match.pos] + \
+                    parent[value] + result[match.endpos:]
+            self.data[k] = result
+
     @staticmethod
     def from_arguments(arguments):
         result = Configuration(None)
