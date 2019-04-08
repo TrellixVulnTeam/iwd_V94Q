@@ -65,7 +65,7 @@ def download(requirement: Requirement, directories: Directories):
      # TODO - Detect if tar contains only one folder, or packs sources without it
     if requirement.url.endswith('.git'):
         source_dir = os.path.join(
-            directories.source, f'{requirement.name}-{requirement.version}')
+            directories.source, name_version(requirement))
         git_clone(requirement.url, source_dir, requirement.version)
         return source_dir
     elif requirement.url.endswith('.tar.gz'):
