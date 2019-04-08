@@ -22,14 +22,6 @@ def parse_args():
     return Configuration.from_arguments(args.cmake_args)
 
 
-class Context:
-    def __init__(self, directories, requirement, source_dir, configuration):
-        self.directories = directories
-        self.requirement = requirement
-        self.source_dir = source_dir
-        self.configuration = configuration
-
-
 def parse_requirements(requirements_file_path: str):
     with open(requirements_file_path, 'r') as f:
         data = json.load(f)
