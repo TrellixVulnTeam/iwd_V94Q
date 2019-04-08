@@ -9,6 +9,7 @@ def makedirs(*args):
 
 class Directories:
     def __init__(self, working_directory):
+        self.working_directory = working_directory
         self.cache = makedirs(working_directory, '.cache')
         self.build = makedirs(working_directory, '.deps', 'build')
         self.source = makedirs(working_directory, '.deps', 'source')

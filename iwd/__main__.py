@@ -14,6 +14,12 @@ import tarfile
 import tempfile
 import urllib.request
 
+CMAKE_FILE_TEMPLATE = """ \
+set(IWD_INSTALL_PREFIX {INSTALL_PREFIX})
+set(CMAKE_PREFIX_PATH {INSTALL_PREFIX})
+
+"""
+
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -30,6 +36,11 @@ def parse_requirements(requirements_file_path: str):
         return [Requirement(**x) for x in data['requirements']]
 
 
+def write_cmake_file(directories):
+    with open(os.path.join(directories.working_directory, 'iwd.cmake'), 'w') as f:
+        f.write(CMAKE_FILE_TEMPLATE.format(INSTALL_PREFIX=directories.install))
+
+
 def main():
     args, configuration = parse_args()
     directories = Directories(args.build_dir)
@@ -39,9 +50,10 @@ def main():
     for requirement in requirements:
         requirement.install(
             configuration, directories)
-
+    write_cmake_file(directories)
     print(
         f'--Done! Use -DCMAKE_PREFIX_PATH={directories.install} while configuring your project')
+    print('-- or add include(iwd.cmake) in your CMakeLists.txt file')
 
 
 if __name__ == '__main__':
