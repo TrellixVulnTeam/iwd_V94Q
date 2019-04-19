@@ -1,8 +1,8 @@
 import os
-
+import pathlib
 
 def makedirs(*args):
-    path = os.path.join(*args)
+    path = pathlib.Path(os.path.join(*args)).as_posix()
     os.makedirs(path, exist_ok=True)
     return path
 
