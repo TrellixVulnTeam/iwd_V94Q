@@ -41,17 +41,18 @@ class Requirement:
         m.update(self.version.encode())
         return m
 
-    def install(self, configuration: Configuration, directories: Directories):
+    def install(self, configuration: Configuration, directories: Directories, force_config = None):
         self.configuration.resolve_variables(configuration)
         source_dir = override_source_directory(
             self, download(self, directories))
         build_dir = directories.make_build_directory(name_version(self))
         cmake_args = self.configuration.as_cmake_args() + configuration.as_cmake_args()
-        # TODO - Handle windows case, when there is need to avoid multiconfig generator
         cmake_call_base = ['cmake', '-S', source_dir, '-B', build_dir]
         subprocess.check_call(cmake_call_base + cmake_args)
-        subprocess.check_call(
-            ['cmake', '--build', build_dir, '--target', 'install'])
+        install_args = ['cmake', '--build', build_dir, '--target', 'install']
+        if force_config is not None:
+            install_args += ['--config', force_config]
+        subprocess.check_call(install_args)
         dump_build_info(configuration, self, build_dir, directories.install)
 
 

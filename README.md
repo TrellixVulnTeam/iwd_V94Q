@@ -124,10 +124,12 @@ In order to use it:
         ]
     }
 ```
-4. In same directory call `iwd [-B build_dir] [ARGS]`  
+4. In same directory call `iwd [-B build_dir] [--config CONFIG] [ARGS]`  
 The args must be defined in `KEY=VALUE` schema, they are then passed to configure step for each package.  
 The build dir(by default `build`) can be used to override the build directory, in which sources will be downloaded, build and
 installed.
+The CONFIG argument can be used on when your platform default generator is a multi-config generator,
+it can be used to force specific build type.
 
 ## Important
 
@@ -148,7 +150,6 @@ TODO - Detect if tar contains only one folder, or packs sources without it
 TODO - When possible, this should print nice download status
 TODO - Create and validate schema
 TODO - Use logging
-TODO - Handle windows case, when there is need to avoid multiconfig generator
 TODO - Store the install_prefix, and configuration info in some nice readable text file
 ```
 2. Add a tool to inspect/clean build packages 
