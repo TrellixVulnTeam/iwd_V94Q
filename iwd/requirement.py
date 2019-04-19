@@ -1,6 +1,8 @@
 from .configuration import Configuration
+import glob
 import json
 import os
+import shutil
 import subprocess
 import tarfile
 import urllib.request
@@ -30,6 +32,7 @@ class Requirement:
         self.version = required_argument('version', kwargs)
         self.url = required_argument('url', kwargs)
         self.cmake_build = optional_argument('cmake_build', kwargs, True)
+        self.copy = optional_argument('copy', kwargs, {})
         self.configuration = Configuration(
             optional_argument('configuration', kwargs, {}))
         self.cmake_directory = optional_argument(
@@ -42,20 +45,33 @@ class Requirement:
         m.update(self.version.encode())
         return m
 
-    def install(self, configuration: Configuration, directories: Directories, force_config = None):
+    def install(self, configuration: Configuration, directories: Directories, force_config=None):
         self.configuration.resolve_variables(configuration)
+        source_dir = override_source_directory(
+            self, download(self, directories))
         if self.cmake_build:
-            source_dir = override_source_directory(
-                self, download(self, directories))
             build_dir = directories.make_build_directory(name_version(self))
             cmake_args = self.configuration.as_cmake_args() + configuration.as_cmake_args()
             cmake_call_base = ['cmake', '-S', source_dir, '-B', build_dir]
             subprocess.check_call(cmake_call_base + cmake_args)
-            install_args = ['cmake', '--build', build_dir, '--target', 'install']
+            install_args = ['cmake', '--build',
+                            build_dir, '--target', 'install']
             if force_config is not None:
                 install_args += ['--config', force_config]
             subprocess.check_call(install_args)
-            dump_build_info(configuration, self, build_dir, directories.install)
+            dump_build_info(configuration, self,
+                            build_dir, directories.install)
+        copy_dependencies(source_dir, directories, self.copy)
+
+
+def copy_dependencies(source_directory, directories: Directories, copy_targets: dict):
+    for source, destination in copy_targets.items():
+        # Assume destination is directory
+        for path in glob.glob(source_directory + "/" + source):
+            destination_directory = os.path.join(
+                directories.install, destination)
+            os.makedirs(destination_directory, exist_ok=True)
+            shutil.copy2(path, destination_directory)
 
 
 def override_source_directory(requirement: Requirement, source_directory: str):
@@ -65,7 +81,7 @@ def override_source_directory(requirement: Requirement, source_directory: str):
 
 
 def download(requirement: Requirement, directories: Directories):
-     # TODO - Detect if tar contains only one folder, or packs sources without it
+    # TODO - Detect if tar contains only one folder, or packs sources without it
     if requirement.url.endswith('.git'):
         source_dir = os.path.join(
             directories.source, name_version(requirement))

@@ -14,10 +14,9 @@ import tarfile
 import tempfile
 import urllib.request
 
-CMAKE_FILE_TEMPLATE = """ \
+CMAKE_FILE_TEMPLATE = """\
 set(IWD_INSTALL_PREFIX {INSTALL_PREFIX})
 set(CMAKE_PREFIX_PATH {INSTALL_PREFIX})
-
 """
 
 
@@ -27,7 +26,7 @@ def parse_args():
                         default=os.path.join(os.getcwd(), 'build'))
     parser.add_argument(
         '--config',
-        help='When using multi config cmake generator, force specific configuration to build', 
+        help='When using multi config cmake generator, force specific configuration to build',
         default=None)
     parser.add_argument('cmake_args', nargs='*')
     args = parser.parse_args()
