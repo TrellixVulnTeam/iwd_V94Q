@@ -29,6 +29,7 @@ class Requirement:
         self.name = required_argument('name', kwargs)
         self.version = required_argument('version', kwargs)
         self.url = required_argument('url', kwargs)
+        self.cmake_build = optional_argument('cmake_build', kwargs, True)
         self.configuration = Configuration(
             optional_argument('configuration', kwargs, {}))
         self.cmake_directory = optional_argument(
@@ -43,17 +44,18 @@ class Requirement:
 
     def install(self, configuration: Configuration, directories: Directories, force_config = None):
         self.configuration.resolve_variables(configuration)
-        source_dir = override_source_directory(
-            self, download(self, directories))
-        build_dir = directories.make_build_directory(name_version(self))
-        cmake_args = self.configuration.as_cmake_args() + configuration.as_cmake_args()
-        cmake_call_base = ['cmake', '-S', source_dir, '-B', build_dir]
-        subprocess.check_call(cmake_call_base + cmake_args)
-        install_args = ['cmake', '--build', build_dir, '--target', 'install']
-        if force_config is not None:
-            install_args += ['--config', force_config]
-        subprocess.check_call(install_args)
-        dump_build_info(configuration, self, build_dir, directories.install)
+        if self.cmake_build:
+            source_dir = override_source_directory(
+                self, download(self, directories))
+            build_dir = directories.make_build_directory(name_version(self))
+            cmake_args = self.configuration.as_cmake_args() + configuration.as_cmake_args()
+            cmake_call_base = ['cmake', '-S', source_dir, '-B', build_dir]
+            subprocess.check_call(cmake_call_base + cmake_args)
+            install_args = ['cmake', '--build', build_dir, '--target', 'install']
+            if force_config is not None:
+                install_args += ['--config', force_config]
+            subprocess.check_call(install_args)
+            dump_build_info(configuration, self, build_dir, directories.install)
 
 
 def override_source_directory(requirement: Requirement, source_directory: str):
