@@ -1,4 +1,5 @@
 from .configuration import Configuration
+from collections import namedtuple
 import glob
 import json
 import os
@@ -32,7 +33,7 @@ class Requirement:
         self.version = required_argument('version', kwargs)
         self.url = required_argument('url', kwargs)
         self.cmake_build = optional_argument('cmake_build', kwargs, True)
-        self.copy = optional_argument('copy', kwargs, {})
+        self.copy = optional_argument('copy', kwargs, [])
         self.configuration = Configuration(
             optional_argument('configuration', kwargs, {}))
         self.cmake_directory = optional_argument(
@@ -64,14 +65,35 @@ class Requirement:
         copy_dependencies(source_dir, directories, self.copy)
 
 
-def copy_dependencies(source_directory, directories: Directories, copy_targets: dict):
-    for source, destination in copy_targets.items():
+def copy_dependencies(source_directory, directories: Directories, copy_targets: list):
+    for target_options in copy_targets:
+        keep_paths = optional_argument('keep-paths', target_options, True)
+        rel_source_dir = optional_argument(
+            'source-directory', target_options, None)
+        if rel_source_dir is not None:
+            source_directory = os.path.join(source_directory, rel_source_dir)
+        expression = required_argument('sources', target_options)
+        destination = required_argument('destination', target_options)
+        search_pattern = source_directory + "/" + expression
+        print(search_pattern)
         # Assume destination is directory
-        for path in glob.glob(source_directory + "/" + source):
-            destination_directory = os.path.join(
-                directories.install, destination)
-            os.makedirs(destination_directory, exist_ok=True)
-            shutil.copy2(path, destination_directory)
+        for target_file_path in glob.iglob(search_pattern, recursive=True):
+
+            if keep_paths:
+                relpath = os.path.relpath(target_file_path, source_directory)
+                dest_file_path = os.path.join(
+                    directories.install,
+                    destination,
+                    relpath)
+            else:
+                dest_file_path = os.path.join(
+                    directories.install,
+                    destination,
+                    os.path.basename(target_file_path))
+            print(dest_file_path)
+            dest_directory = os.path.dirname(dest_file_path)
+            os.makedirs(dest_directory, exist_ok=True)
+            shutil.copy2(target_file_path, dest_file_path)
 
 
 def override_source_directory(requirement: Requirement, source_directory: str):
