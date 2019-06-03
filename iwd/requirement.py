@@ -75,7 +75,6 @@ def copy_dependencies(source_directory, directories: Directories, copy_targets: 
         expression = required_argument('sources', target_options)
         destination = required_argument('destination', target_options)
         search_pattern = source_directory + "/" + expression
-        print(search_pattern)
         # Assume destination is directory
         for target_file_path in glob.iglob(search_pattern, recursive=True):
 
@@ -90,7 +89,6 @@ def copy_dependencies(source_directory, directories: Directories, copy_targets: 
                     directories.install,
                     destination,
                     os.path.basename(target_file_path))
-            print(dest_file_path)
             dest_directory = os.path.dirname(dest_file_path)
             os.makedirs(dest_directory, exist_ok=True)
             shutil.copy2(target_file_path, dest_file_path)
