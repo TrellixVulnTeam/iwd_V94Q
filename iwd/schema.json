@@ -1,4 +1,7 @@
 {
+    "definitions": {},
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$id": "iwd",
     "type": "object",
     "properties": {
         "requirements": {
@@ -60,6 +63,42 @@
                             "required": [
                                 "sources",
                                 "destination"
+                            ]
+                        }
+                    },
+                    "patch": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "type": {
+                                    "type": "string",
+                                    "enum": [
+                                        "replace",
+                                        "append",
+                                        "create"
+                                    ],
+                                    "description": "Describes what kind of patch command is this"
+                                },
+                                "file": {
+                                    "type": "string",
+                                    "description": "Describes the relative path from source directory to the file on which the operation should be executed."
+                                },
+                                "text": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "description": "Lines, which will be added to the file"
+                                },
+                                "pattern": {
+                                    "type": "string",
+                                    "description": "Required only for replace command. Regex pattern that will serve as a target for replacement."
+                                }
+                            },
+                            "required": [
+                                "file",
+                                "text"
                             ]
                         }
                     }
