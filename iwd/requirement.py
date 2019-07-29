@@ -1,6 +1,7 @@
 import glob
 import hashlib
 import json
+import logging
 import os
 import shutil
 import subprocess
@@ -8,6 +9,7 @@ import tarfile
 import urllib.request
 from collections import namedtuple
 
+from . import patch_util
 from .configuration import Configuration
 from .directories import Directories
 
@@ -39,6 +41,7 @@ class Requirement:
             optional_argument('configuration', kwargs, {}))
         self.cmake_directory = optional_argument(
             'cmake_directory', kwargs, None)
+        self.patches = optional_argument('patch', kwargs, [])
 
     def get_hash(self, hash_obj=None):
         m = hashlib.sha256() if hash_obj is None else hash_obj
@@ -51,6 +54,7 @@ class Requirement:
         self.configuration.resolve_variables(configuration)
         source_dir = override_source_directory(
             self, download(self, directories))
+        apply_patches(source_dir, self.patches)
         if self.cmake_build:
             build_dir = directories.make_build_directory(name_version(self))
             cmake_args = self.configuration.as_cmake_args() + configuration.as_cmake_args()
@@ -64,6 +68,58 @@ class Requirement:
             dump_build_info(configuration, self,
                             build_dir, directories.install)
         copy_dependencies(source_dir, directories, self.copy)
+
+
+def apply_patch_check_file(file):
+    if not os.path.isfile(file):
+        raise Exception(
+            'Failed to apply patch on file {} because it does not exist'.format(file))
+
+
+def apply_replace_patch(source_directory, patch):
+    target_file = os.path.join(
+        source_directory, required_argument('file', patch))
+    apply_patch_check_file(target_file)
+    string = required_argument('pattern', patch)
+    replacement = required_argument('text', patch)
+    patch_util.replace_in_file(target_file, string, replacement)
+
+
+def apply_append_patch(source_directory, patch):
+    target_file = os.path.join(
+        source_directory, required_argument('file', patch))
+    apply_patch_check_file(target_file)
+    text = required_argument('text', patch)
+    patch_util.append_text(target_file, text)
+
+
+def apply_create_patch(source_directory, patch):
+    target_file = os.path.join(
+        source_directory, required_argument('file', patch))
+    text = required_argument('text', patch)
+    with open(target_file, 'w') as f:
+        if isinstance(text, list):
+            for line in text:
+                f.write(line + '\n')
+        else:
+            f.write(text)
+
+
+PATCH_COMMAND_MAPPINGS = {
+    'replace': apply_replace_patch,
+    'append': apply_append_patch,
+    'create': apply_create_patch
+}
+
+
+def apply_patches(source_directory, patches_arr):
+    logging.debug('Applying patches in %s', source_directory)
+    for patch in patches_arr:
+        patch_type = required_argument('type', patch)
+        if patch_type in PATCH_COMMAND_MAPPINGS:
+            PATCH_COMMAND_MAPPINGS[patch_type](source_directory, patch)
+        else:
+            raise Exception(f'Invalid patch type {patch_type}')
 
 
 def copy_dependencies(source_directory, directories: Directories, copy_targets: list):
@@ -102,6 +158,7 @@ def override_source_directory(requirement: Requirement, source_directory: str):
 
 
 def download(requirement: Requirement, directories: Directories):
+    logging.debug('Downloading requirement %s', requirement.url)
     # TODO - Detect if tar contains only one folder, or packs sources without it
     if requirement.url.endswith('.git'):
         source_dir = os.path.join(
@@ -117,6 +174,7 @@ def download(requirement: Requirement, directories: Directories):
 
 
 def untargz(targzfile_path: str, output_directory: str):
+    logging.debug('Extracting %s to %s', targzfile_path, output_directory)
     with tarfile.open(targzfile_path, 'r:gz') as tar:
         tar.extractall(path=output_directory)
         return [os.path.join(output_directory, x.name) for x in tar.getmembers()]
