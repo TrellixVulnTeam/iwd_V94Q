@@ -1,13 +1,14 @@
-from .configuration import Configuration
-from collections import namedtuple
 import glob
+import hashlib
 import json
 import os
 import shutil
 import subprocess
 import tarfile
 import urllib.request
-import hashlib
+from collections import namedtuple
+
+from .configuration import Configuration
 from .directories import Directories
 
 

@@ -1,7 +1,6 @@
-from collections import UserDict
 import hashlib
 import re
-
+from collections import UserDict
 
 ARGUMENT_REGEX = re.compile(r'(-D)?(?P<key>\w+)=(?P<value>[\w/]+)')
 EXPRESSION_RULE = re.compile(

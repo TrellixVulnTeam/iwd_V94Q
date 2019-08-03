@@ -1,20 +1,21 @@
 import argparse
 import copy
-from .configuration import Configuration
-from .directories import Directories, makedirs
 import hashlib
 import json
-from .json_encoder import JsonEncoder
 import logging
 import os
 import re
-from .requirement import Requirement
 import subprocess
 import tarfile
 import tempfile
 import urllib.request
+
 from jsonschema import validate
-import os
+
+from .configuration import Configuration
+from .directories import Directories, makedirs
+from .json_encoder import JsonEncoder
+from .requirement import Requirement
 
 CMAKE_FILE_TEMPLATE = """\
 set(IWD_INSTALL_PREFIX {INSTALL_PREFIX})

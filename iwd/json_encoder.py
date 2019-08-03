@@ -1,4 +1,5 @@
 import json
+
 from .configuration import Configuration
 from .requirement import Requirement
 
