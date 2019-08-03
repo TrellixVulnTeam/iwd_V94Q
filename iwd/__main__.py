@@ -13,6 +13,8 @@ import subprocess
 import tarfile
 import tempfile
 import urllib.request
+from jsonschema import validate
+import os
 
 CMAKE_FILE_TEMPLATE = """\
 set(IWD_INSTALL_PREFIX {INSTALL_PREFIX})
@@ -33,11 +35,19 @@ def parse_args():
     return args, Configuration.from_arguments(args.cmake_args)
 
 
-def parse_requirements(requirements_file_path: str):
-    with open(requirements_file_path, 'r') as f:
+def parse_json(file_path, schema=None):
+    with open(file_path, 'r') as f:
         data = json.load(f)
-        # TODO - Create and validate schema
-        return [Requirement(**x) for x in data['requirements']]
+        if schema is not None:
+            validate(data, schema)
+        return data
+
+
+def parse_requirements(requirements_file_path: str):
+    file_directory = os.path.dirname(__file__)
+    schema = parse_json(os.path.join(file_directory, 'schema.json'))
+    data = parse_json(requirements_file_path, schema=schema)
+    return [Requirement(**x) for x in data['requirements']]
 
 
 def write_cmake_file(directories):
