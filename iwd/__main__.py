@@ -31,6 +31,11 @@ def parse_args():
         '--config',
         help='When using multi config cmake generator, force specific configuration to build',
         default=None)
+    parser.add_argument(
+        '-G',
+        '--generator',
+        help='Force specific cmake generator to be used',
+        default=None)
     parser.add_argument('cmake_args', nargs='*')
     args = parser.parse_args()
     return args, Configuration.from_arguments(args.cmake_args)
@@ -64,7 +69,7 @@ def main():
 
     for requirement in requirements:
         requirement.install(
-            configuration, directories, args.config)
+            configuration, directories, args.config, args.generator)
     write_cmake_file(directories)
     print(
         f'--Done! Use -DCMAKE_PREFIX_PATH={directories.install} while configuring your project')
