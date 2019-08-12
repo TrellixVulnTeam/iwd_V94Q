@@ -50,7 +50,7 @@ class Requirement:
         m.update(self.version.encode())
         return m
 
-    def install(self, configuration: Configuration, directories: Directories, force_config=None):
+    def install(self, configuration: Configuration, directories: Directories, force_config=None, force_generator=None):
         self.configuration.resolve_variables(configuration)
         source_dir = override_source_directory(
             self, download(self, directories))
@@ -59,6 +59,8 @@ class Requirement:
             build_dir = directories.make_build_directory(name_version(self))
             cmake_args = self.configuration.as_cmake_args() + configuration.as_cmake_args()
             cmake_call_base = ['cmake', '-S', source_dir, '-B', build_dir]
+            if force_generator is not None:
+                cmake_call_base += ['-G', force_generator]
             subprocess.check_call(cmake_call_base + cmake_args)
             install_args = ['cmake', '--build',
                             build_dir, '--target', 'install']
