@@ -12,7 +12,7 @@ from collections import namedtuple
 from . import patch_util
 from .configuration import Configuration
 from .directories import Directories
-from .tools import untargz
+from .tools import untargz, download_file
 
 
 def required_argument(name, dictlike):
@@ -195,10 +195,7 @@ def download(requirement: Requirement, directories: Directories):
 def download_requirement(requirement: Requirement, directories: Directories):
     name = get_requirement_hash(requirement).hexdigest()
     download_file_path = os.path.join(directories.cache, name)
-    if not os.path.isfile(download_file_path):
-        # TODO - When possible, this should print nice download status
-        urllib.request.urlretrieve(
-            requirement.url, filename=download_file_path)
+    download_file(requirement.url, download_file_path)
     return download_file_path
 
 
