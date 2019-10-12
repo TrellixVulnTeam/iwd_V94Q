@@ -1,9 +1,7 @@
-import glob
 import hashlib
 import json
 import logging
 import os
-import shutil
 import subprocess
 import tarfile
 import urllib.request
@@ -14,6 +12,7 @@ from .configuration import Configuration
 from .directories import Directories
 from .tools import untargz, download_file, git_clone
 from .quicktype import Patch, Copy
+from .copy_util import copy_files
 
 
 def required_argument(name, dictlike):
@@ -104,24 +103,12 @@ def copy_dependencies(source_directory, directories: Directories, copy_targets: 
             source_dir = os.path.join(source_directory, rel_source_dir)
         expression = target_options.sources
         destination = target_options.destination
-        search_pattern = source_dir + "/" + expression
         # Assume destination is directory
-        for target_file_path in glob.iglob(search_pattern, recursive=True):
-
-            if keep_paths:
-                relpath = os.path.relpath(target_file_path, source_dir)
-                dest_file_path = os.path.join(
-                    directories.install,
-                    destination,
-                    relpath)
-            else:
-                dest_file_path = os.path.join(
-                    directories.install,
-                    destination,
-                    os.path.basename(target_file_path))
-            dest_directory = os.path.dirname(dest_file_path)
-            os.makedirs(dest_directory, exist_ok=True)
-            shutil.copy2(target_file_path, dest_file_path)
+        copy_files(
+            source_dir,
+            expression,
+            os.path.join(directories.install, destination),
+            keep_paths)
 
 
 def override_source_directory(requirement: Requirement, source_directory: str):
