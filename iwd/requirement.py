@@ -12,7 +12,7 @@ from collections import namedtuple
 from . import patch_util
 from .configuration import Configuration
 from .directories import Directories
-from .tools import untargz, download_file
+from .tools import untargz, download_file, git_clone
 
 
 def required_argument(name, dictlike):
@@ -197,14 +197,6 @@ def download_requirement(requirement: Requirement, directories: Directories):
     download_file_path = os.path.join(directories.cache, name)
     download_file(requirement.url, download_file_path)
     return download_file_path
-
-
-def git_clone(url, target_directory, version):
-    if not os.path.isdir(target_directory):
-        subprocess.check_call([
-            'git', 'clone', '--depth', '1', '--recursive', '--branch', version,  url, str(
-                target_directory)
-        ])
 
 
 def dump_build_info(configuration: Configuration, requirement: Requirement, build_dir: str, install_directory_hash: str):

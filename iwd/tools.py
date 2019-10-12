@@ -2,6 +2,7 @@ import logging
 import os
 import tarfile
 import urllib.request
+import subprocess
 
 
 def untargz(targzfile_path: str, output_directory: str):
@@ -16,3 +17,11 @@ def download_file(url: str, download_file_path: str, override_existing=False):
         # TODO - When possible, this should print nice download status
         urllib.request.urlretrieve(
             url, filename=download_file_path)
+
+
+def git_clone(url, target_directory, version):
+    if not os.path.isdir(target_directory):
+        subprocess.check_call([
+            'git', 'clone', '--depth', '1', '--recursive', '--branch', version,  url, str(
+                target_directory)
+        ])
