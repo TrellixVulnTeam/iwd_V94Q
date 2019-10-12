@@ -12,6 +12,7 @@ from collections import namedtuple
 from . import patch_util
 from .configuration import Configuration
 from .directories import Directories
+from .tools import untargz
 
 
 def required_argument(name, dictlike):
@@ -189,13 +190,6 @@ def download(requirement: Requirement, directories: Directories):
     else:
         raise Exception(
             'Invalid url provided, must end with either .git, or .tar.gz')
-
-
-def untargz(targzfile_path: str, output_directory: str):
-    logging.debug('Extracting %s to %s', targzfile_path, output_directory)
-    with tarfile.open(targzfile_path, 'r:gz') as tar:
-        tar.extractall(path=output_directory)
-        return [os.path.join(output_directory, x.name) for x in tar.getmembers()]
 
 
 def download_requirement(requirement: Requirement, directories: Directories):
