@@ -13,6 +13,7 @@ from . import patch_util
 from .configuration import Configuration
 from .directories import Directories
 from .tools import untargz, download_file, git_clone
+from .quicktype import Patch, TypeEnum as PatchType
 
 
 def required_argument(name, dictlike):
@@ -42,7 +43,8 @@ class Requirement:
             optional_argument('configuration', kwargs, {}))
         self.cmake_directory = optional_argument(
             'cmake_directory', kwargs, None)
-        self.patches = optional_argument('patch', kwargs, [])
+        self.patches = [
+            Patch.from_dict(x) for x in optional_argument('patch', kwargs, [])]
 
 
 def get_requirement_hash(
@@ -94,27 +96,30 @@ def build_with_cmake(requirement: Requirement, source_dir, configuration: Config
                     build_dir, directories.install)
 
 
-def apply_replace_patch(source_directory, patch):
+def apply_replace_patch(source_directory, patch: Patch):
     target_file = os.path.join(
-        source_directory, required_argument('file', patch))
+        source_directory, patch.file)
     apply_patch_check_file(target_file)
-    string = required_argument('pattern', patch)
-    replacement = required_argument('text', patch)
+    string = patch.pattern
+    if string is None:
+        raise Exception(
+            f'Missing required argument `pattern` for patch of type replace')
+    replacement = patch.text
     patch_util.replace_in_file(target_file, string, replacement)
 
 
-def apply_append_patch(source_directory, patch):
+def apply_append_patch(source_directory, patch: Patch):
     target_file = os.path.join(
-        source_directory, required_argument('file', patch))
+        source_directory, patch.file)
     apply_patch_check_file(target_file)
-    text = required_argument('text', patch)
+    text = patch.text
     patch_util.append_text(target_file, text)
 
 
-def apply_create_patch(source_directory, patch):
+def apply_create_patch(source_directory, patch: Patch):
     target_file = os.path.join(
-        source_directory, required_argument('file', patch))
-    text = required_argument('text', patch)
+        source_directory, patch.file)
+    text = patch.text
     with open(target_file, 'w') as f:
         if isinstance(text, list):
             for line in text:
@@ -124,16 +129,16 @@ def apply_create_patch(source_directory, patch):
 
 
 PATCH_COMMAND_MAPPINGS = {
-    'replace': apply_replace_patch,
-    'append': apply_append_patch,
-    'create': apply_create_patch
+    PatchType.REPLACE: apply_replace_patch,
+    PatchType.APPEND: apply_append_patch,
+    PatchType.CREATE: apply_create_patch
 }
 
 
 def apply_patches(source_directory, patches_arr):
     logging.debug('Applying patches in %s', source_directory)
     for patch in patches_arr:
-        patch_type = required_argument('type', patch)
+        patch_type = patch.type
         if patch_type in PATCH_COMMAND_MAPPINGS:
             PATCH_COMMAND_MAPPINGS[patch_type](source_directory, patch)
         else:
