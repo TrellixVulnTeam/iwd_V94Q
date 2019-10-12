@@ -15,7 +15,7 @@ from jsonschema import validate
 from .configuration import Configuration
 from .directories import Directories, makedirs
 from .json_encoder import JsonEncoder
-from .requirement import Requirement
+from .requirement import Requirement, install_requirement
 
 CMAKE_FILE_TEMPLATE = """\
 set(IWD_INSTALL_PREFIX {INSTALL_PREFIX})
@@ -68,7 +68,8 @@ def main():
     configuration['CMAKE_INSTALL_PREFIX'] = directories.install
 
     for requirement in requirements:
-        requirement.install(
+        install_requirement(
+            requirement,
             configuration, directories, args.config, args.generator)
     write_cmake_file(directories)
     print(

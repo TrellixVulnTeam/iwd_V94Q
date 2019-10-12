@@ -50,15 +50,21 @@ class Requirement:
         m.update(self.version.encode())
         return m
 
-    def install(self, configuration: Configuration, directories: Directories, force_config=None, force_generator=None):
-        self.configuration.resolve_variables(configuration)
-        source_dir = override_source_directory(
-            self, download(self, directories))
-        apply_patches(source_dir, self.patches)
-        if self.cmake_build:
-            build_with_cmake(self, source_dir, configuration, directories,
-                             force_config, force_generator)
-        copy_dependencies(source_dir, directories, self.copy)
+
+def install_requirement(
+        requirement: Requirement,
+        configuration: Configuration,
+        directories: Directories,
+        force_config=None,
+        force_generator=None):
+    requirement.configuration.resolve_variables(configuration)
+    source_dir = override_source_directory(
+        requirement, download(requirement, directories))
+    apply_patches(source_dir, requirement.patches)
+    if requirement.cmake_build:
+        build_with_cmake(requirement, source_dir, configuration, directories,
+                         force_config, force_generator)
+    copy_dependencies(source_dir, directories, requirement.copy)
 
 
 def apply_patch_check_file(file):
