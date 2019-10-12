@@ -43,12 +43,15 @@ class Requirement:
             'cmake_directory', kwargs, None)
         self.patches = optional_argument('patch', kwargs, [])
 
-    def get_hash(self, hash_obj=None):
-        m = hashlib.sha256() if hash_obj is None else hash_obj
-        m.update(self.name.encode())
-        m.update(self.url.encode())
-        m.update(self.version.encode())
-        return m
+
+def get_requirement_hash(
+        requirement: Requirement,
+        hash_obj=None):
+    m = hashlib.sha256() if hash_obj is None else hash_obj
+    m.update(requirement.name.encode())
+    m.update(requirement.url.encode())
+    m.update(requirement.version.encode())
+    return m
 
 
 def install_requirement(
@@ -196,7 +199,7 @@ def untargz(targzfile_path: str, output_directory: str):
 
 
 def download_requirement(requirement: Requirement, directories: Directories):
-    name = requirement.get_hash().hexdigest()
+    name = get_requirement_hash(requirement).hexdigest()
     download_file_path = os.path.join(directories.cache, name)
     if not os.path.isfile(download_file_path):
         # TODO - When possible, this should print nice download status
