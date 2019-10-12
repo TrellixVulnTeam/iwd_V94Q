@@ -126,19 +126,20 @@ def apply_patches(source_directory, patches_arr):
 
 def copy_dependencies(source_directory, directories: Directories, copy_targets: list):
     for target_options in copy_targets:
+        source_dir = source_directory
         keep_paths = optional_argument('keep-paths', target_options, True)
         rel_source_dir = optional_argument(
             'source-directory', target_options, None)
         if rel_source_dir is not None:
-            source_directory = os.path.join(source_directory, rel_source_dir)
+            source_dir = os.path.join(source_directory, rel_source_dir)
         expression = required_argument('sources', target_options)
         destination = required_argument('destination', target_options)
-        search_pattern = source_directory + "/" + expression
+        search_pattern = source_dir + "/" + expression
         # Assume destination is directory
         for target_file_path in glob.iglob(search_pattern, recursive=True):
 
             if keep_paths:
-                relpath = os.path.relpath(target_file_path, source_directory)
+                relpath = os.path.relpath(target_file_path, source_dir)
                 dest_file_path = os.path.join(
                     directories.install,
                     destination,
