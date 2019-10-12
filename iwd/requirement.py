@@ -13,7 +13,7 @@ from . import patch_util
 from .configuration import Configuration
 from .directories import Directories
 from .tools import untargz, download_file, git_clone
-from .quicktype import Patch
+from .quicktype import Patch, Copy
 
 
 def required_argument(name, dictlike):
@@ -28,6 +28,10 @@ def optional_argument(name, dictlike, default=None):
     return dictlike[name]
 
 
+def value_or(value, default):
+    return value if value is not None else default
+
+
 def name_version(requirement):
     return f'{requirement.name}-{requirement.version}'
 
@@ -38,7 +42,8 @@ class Requirement:
         self.version = required_argument('version', kwargs)
         self.url = required_argument('url', kwargs)
         self.cmake_build = optional_argument('cmake_build', kwargs, True)
-        self.copy = optional_argument('copy', kwargs, [])
+        self.copy = [Copy.from_dict(x)
+                     for x in optional_argument('copy', kwargs, [])]
         self.configuration = Configuration(
             optional_argument('configuration', kwargs, {}))
         self.cmake_directory = optional_argument(
@@ -93,13 +98,12 @@ def build_with_cmake(requirement: Requirement, source_dir, configuration: Config
 def copy_dependencies(source_directory, directories: Directories, copy_targets: list):
     for target_options in copy_targets:
         source_dir = source_directory
-        keep_paths = optional_argument('keep-paths', target_options, True)
-        rel_source_dir = optional_argument(
-            'source-directory', target_options, None)
+        keep_paths = value_or(target_options.keep_paths, True)
+        rel_source_dir = target_options.source_directory
         if rel_source_dir is not None:
             source_dir = os.path.join(source_directory, rel_source_dir)
-        expression = required_argument('sources', target_options)
-        destination = required_argument('destination', target_options)
+        expression = target_options.sources
+        destination = target_options.destination
         search_pattern = source_dir + "/" + expression
         # Assume destination is directory
         for target_file_path in glob.iglob(search_pattern, recursive=True):
