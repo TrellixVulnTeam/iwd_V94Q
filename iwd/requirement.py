@@ -56,19 +56,8 @@ class Requirement:
             self, download(self, directories))
         apply_patches(source_dir, self.patches)
         if self.cmake_build:
-            build_dir = directories.make_build_directory(name_version(self))
-            cmake_args = self.configuration.as_cmake_args() + configuration.as_cmake_args()
-            cmake_call_base = ['cmake', '-S', source_dir, '-B', build_dir]
-            if force_generator is not None:
-                cmake_call_base += ['-G', force_generator]
-            subprocess.check_call(cmake_call_base + cmake_args)
-            install_args = ['cmake', '--build',
-                            build_dir, '--target', 'install']
-            if force_config is not None:
-                install_args += ['--config', force_config]
-            subprocess.check_call(install_args)
-            dump_build_info(configuration, self,
-                            build_dir, directories.install)
+            build_with_cmake(self, source_dir, configuration, directories,
+                             force_config, force_generator)
         copy_dependencies(source_dir, directories, self.copy)
 
 
@@ -76,6 +65,23 @@ def apply_patch_check_file(file):
     if not os.path.isfile(file):
         raise Exception(
             'Failed to apply patch on file {} because it does not exist'.format(file))
+
+
+def build_with_cmake(requirement: Requirement, source_dir, configuration: Configuration, directories: Directories, force_config, force_generator):
+    build_dir = directories.make_build_directory(name_version(requirement))
+    cmake_args = requirement.configuration.as_cmake_args() + \
+        configuration.as_cmake_args()
+    cmake_call_base = ['cmake', '-S', source_dir, '-B', build_dir]
+    if force_generator is not None:
+        cmake_call_base += ['-G', force_generator]
+    subprocess.check_call(cmake_call_base + cmake_args)
+    install_args = ['cmake', '--build',
+                    build_dir, '--target', 'install']
+    if force_config is not None:
+        install_args += ['--config', force_config]
+    subprocess.check_call(install_args)
+    dump_build_info(configuration, requirement,
+                    build_dir, directories.install)
 
 
 def apply_replace_patch(source_directory, patch):
