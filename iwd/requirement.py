@@ -97,18 +97,15 @@ def build_with_cmake(requirement: Requirement, source_dir, configuration: Config
 def copy_dependencies(source_directory, directories: Directories, copy_targets: list):
     for target_options in copy_targets:
         source_dir = source_directory
-        keep_paths = value_or(target_options.keep_paths, True)
         rel_source_dir = target_options.source_directory
         if rel_source_dir is not None:
             source_dir = os.path.join(source_directory, rel_source_dir)
-        expression = target_options.sources
-        destination = target_options.destination
         # Assume destination is directory
         copy_files(
             source_dir,
-            expression,
-            os.path.join(directories.install, destination),
-            keep_paths)
+            target_options.sources,
+            os.path.join(directories.install, target_options.destination),
+            value_or(target_options.keep_paths, True))
 
 
 def override_source_directory(requirement: Requirement, source_directory: str):
