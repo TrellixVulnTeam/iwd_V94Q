@@ -13,7 +13,7 @@ from . import patch_util
 from .configuration import Configuration
 from .directories import Directories
 from .tools import untargz, download_file, git_clone
-from .quicktype import Patch, TypeEnum as PatchType
+from .quicktype import Patch
 
 
 def required_argument(name, dictlike):
@@ -66,17 +66,11 @@ def install_requirement(
     requirement.configuration.resolve_variables(configuration)
     source_dir = override_source_directory(
         requirement, download(requirement, directories))
-    apply_patches(source_dir, requirement.patches)
+    patch_util.apply_patches(source_dir, requirement.patches)
     if requirement.cmake_build:
         build_with_cmake(requirement, source_dir, configuration, directories,
                          force_config, force_generator)
     copy_dependencies(source_dir, directories, requirement.copy)
-
-
-def apply_patch_check_file(file):
-    if not os.path.isfile(file):
-        raise Exception(
-            'Failed to apply patch on file {} because it does not exist'.format(file))
 
 
 def build_with_cmake(requirement: Requirement, source_dir, configuration: Configuration, directories: Directories, force_config, force_generator):
@@ -94,55 +88,6 @@ def build_with_cmake(requirement: Requirement, source_dir, configuration: Config
     subprocess.check_call(install_args)
     dump_build_info(configuration, requirement,
                     build_dir, directories.install)
-
-
-def apply_replace_patch(source_directory, patch: Patch):
-    target_file = os.path.join(
-        source_directory, patch.file)
-    apply_patch_check_file(target_file)
-    string = patch.pattern
-    if string is None:
-        raise Exception(
-            f'Missing required argument `pattern` for patch of type replace')
-    replacement = patch.text
-    patch_util.replace_in_file(target_file, string, replacement)
-
-
-def apply_append_patch(source_directory, patch: Patch):
-    target_file = os.path.join(
-        source_directory, patch.file)
-    apply_patch_check_file(target_file)
-    text = patch.text
-    patch_util.append_text(target_file, text)
-
-
-def apply_create_patch(source_directory, patch: Patch):
-    target_file = os.path.join(
-        source_directory, patch.file)
-    text = patch.text
-    with open(target_file, 'w') as f:
-        if isinstance(text, list):
-            for line in text:
-                f.write(line + '\n')
-        else:
-            f.write(text)
-
-
-PATCH_COMMAND_MAPPINGS = {
-    PatchType.REPLACE: apply_replace_patch,
-    PatchType.APPEND: apply_append_patch,
-    PatchType.CREATE: apply_create_patch
-}
-
-
-def apply_patches(source_directory, patches_arr):
-    logging.debug('Applying patches in %s', source_directory)
-    for patch in patches_arr:
-        patch_type = patch.type
-        if patch_type in PATCH_COMMAND_MAPPINGS:
-            PATCH_COMMAND_MAPPINGS[patch_type](source_directory, patch)
-        else:
-            raise Exception(f'Invalid patch type {patch_type}')
 
 
 def copy_dependencies(source_directory, directories: Directories, copy_targets: list):
