@@ -54,8 +54,9 @@ def install_requirement(
         force_generator=None):
     requirement.configuration = value_or(requirement.configuration, {})
     resolve_configuration_variables(requirement.configuration, configuration)
+    source_directory = download(requirement, directories)
     source_dir = override_source_directory(
-        requirement, download(requirement, directories))
+        requirement, source_directory)
     if requirement.patch:
         patch_util.apply_patches(source_dir, requirement.patch)
     if value_or(requirement.cmake_build, True):
