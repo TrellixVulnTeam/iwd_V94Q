@@ -55,12 +55,12 @@ def install_requirement(
     requirement.configuration = value_or(requirement.configuration, {})
     resolve_configuration_variables(requirement.configuration, configuration)
     source_directory = download(requirement, directories)
-    source_dir = override_source_directory(
+    cmake_source_directory = override_source_directory(
         requirement, source_directory)
     if requirement.patch:
         patch_util.apply_patches(source_directory, requirement.patch)
     if value_or(requirement.cmake_build, True):
-        build_with_cmake(requirement, source_dir, configuration, directories,
+        build_with_cmake(requirement, cmake_source_directory, configuration, directories,
                          force_config, force_generator)
     if requirement.copy:
         copy_dependencies(source_directory, directories, requirement.copy)
