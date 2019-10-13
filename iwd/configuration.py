@@ -19,11 +19,7 @@ class Configuration(UserDict):
         return [make_cmake_arg(key, value) for key, value in self.data.items()]
 
     def resolve_variables(self, parent):
-        for k, v in self.data.items():
-            def subimpl(matchobj):
-                value = matchobj.groupdict()['key']
-                return parent[value]
-            self.data[k] = EXPRESSION_RULE.sub(subimpl, v)
+        return resolve_configuration_variables(self, parent)
 
     @staticmethod
     def from_arguments(arguments):
@@ -37,3 +33,11 @@ class Configuration(UserDict):
                 groups = match.groupdict()
                 result[groups['key']] = groups['value']
         return result
+
+
+def resolve_configuration_variables(configuration, parent):
+    for k, v in configuration.items():
+        def subimpl(matchobj):
+            value = matchobj.groupdict()['key']
+            return parent[value]
+        configuration[k] = EXPRESSION_RULE.sub(subimpl, v)
