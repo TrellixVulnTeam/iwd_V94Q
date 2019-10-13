@@ -13,6 +13,7 @@ from .directories import Directories
 from .tools import untargz, download_file, git_clone
 from .quicktype import Patch, Copy, Requirement
 from .copy_util import copy_files
+from .cmake import CMake
 
 
 def required_argument(name, dictlike):
@@ -66,19 +67,15 @@ def install_requirement(
 
 def build_with_cmake(requirement: Requirement, source_dir, configuration: Configuration, directories: Directories, force_config, force_generator):
     build_dir = directories.make_build_directory(name_version(requirement))
-    cmake_args = make_cmake_arguments(requirement.configuration) + \
-        make_cmake_arguments(configuration)
-    cmake_call_base = ['cmake', '-S', source_dir, '-B', build_dir]
-    if force_generator is not None:
-        cmake_call_base += ['-G', force_generator]
-    subprocess.check_call(cmake_call_base + cmake_args)
-    install_args = ['cmake', '--build',
-                    build_dir, '--target', 'install']
-    if force_config is not None:
-        install_args += ['--config', force_config]
-    subprocess.check_call(install_args)
+    cmake = CMake(source_dir, build_dir)
+    cmake.generator = force_generator
+    cmake.build_type = force_config
+    cmake.add_options(configuration)
+    cmake.add_options(requirement.configuration)
+    cmake.configure()
+    cmake.install()
     dump_build_info(configuration, requirement,
-                    build_dir, directories.install)
+                    cmake.build_directory, directories.install)
 
 
 def copy_dependencies(source_directory, directories: Directories, copy_targets: list):
