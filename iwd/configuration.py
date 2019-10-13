@@ -16,7 +16,7 @@ class Configuration(UserDict):
         super().__init__(initial_data)
 
     def as_cmake_args(self):
-        return [make_cmake_arg(key, value) for key, value in self.data.items()]
+        return make_cmake_arguments(self)
 
     def resolve_variables(self, parent):
         return resolve_configuration_variables(self, parent)
@@ -33,6 +33,10 @@ class Configuration(UserDict):
                 groups = match.groupdict()
                 result[groups['key']] = groups['value']
         return result
+
+
+def make_cmake_arguments(configuration):
+    return [make_cmake_arg(key, value) for key, value in configuration.items()]
 
 
 def resolve_configuration_variables(configuration, parent):
