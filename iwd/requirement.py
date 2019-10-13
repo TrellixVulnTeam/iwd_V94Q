@@ -8,7 +8,7 @@ import urllib.request
 from collections import namedtuple
 
 from . import patch_util
-from .configuration import Configuration, resolve_configuration_variables
+from .configuration import Configuration, resolve_configuration_variables, make_cmake_arguments
 from .directories import Directories
 from .tools import untargz, download_file, git_clone
 from .quicktype import Patch, Copy
@@ -79,8 +79,8 @@ def install_requirement(
 
 def build_with_cmake(requirement: Requirement, source_dir, configuration: Configuration, directories: Directories, force_config, force_generator):
     build_dir = directories.make_build_directory(name_version(requirement))
-    cmake_args = requirement.configuration.as_cmake_args() + \
-        configuration.as_cmake_args()
+    cmake_args = make_cmake_arguments(requirement.configuration) + \
+        make_cmake_arguments(configuration)
     cmake_call_base = ['cmake', '-S', source_dir, '-B', build_dir]
     if force_generator is not None:
         cmake_call_base += ['-G', force_generator]
