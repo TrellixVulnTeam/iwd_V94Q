@@ -11,7 +11,7 @@ from . import patch_util
 from .configuration import Configuration, resolve_configuration_variables, make_cmake_arguments
 from .directories import Directories
 from .tools import untargz, download_file, git_clone
-from .quicktype import Patch, Copy
+from .quicktype import Patch, Copy, Requirement
 from .copy_util import copy_files
 
 
@@ -35,22 +35,6 @@ def name_version(requirement):
     return f'{requirement.name}-{requirement.version}'
 
 
-class Requirement:
-    def __init__(self, **kwargs):
-        self.name = required_argument('name', kwargs)
-        self.version = required_argument('version', kwargs)
-        self.url = required_argument('url', kwargs)
-        self.cmake_build = optional_argument('cmake_build', kwargs, True)
-        self.copy = [Copy.from_dict(x)
-                     for x in optional_argument('copy', kwargs, [])]
-        self.configuration = Configuration(
-            optional_argument('configuration', kwargs, {}))
-        self.cmake_directory = optional_argument(
-            'cmake_directory', kwargs, None)
-        self.patches = [
-            Patch.from_dict(x) for x in optional_argument('patch', kwargs, [])]
-
-
 def get_requirement_hash(
         requirement: Requirement,
         hash_obj=None):
@@ -67,14 +51,17 @@ def install_requirement(
         directories: Directories,
         force_config=None,
         force_generator=None):
+    requirement.configuration = value_or(requirement.configuration, {})
     resolve_configuration_variables(requirement.configuration, configuration)
     source_dir = override_source_directory(
         requirement, download(requirement, directories))
-    patch_util.apply_patches(source_dir, requirement.patches)
-    if requirement.cmake_build:
+    if requirement.patch:
+        patch_util.apply_patches(source_dir, requirement.patch)
+    if value_or(requirement.cmake_build, True):
         build_with_cmake(requirement, source_dir, configuration, directories,
                          force_config, force_generator)
-    copy_dependencies(source_dir, directories, requirement.copy)
+    if requirement.copy:
+        copy_dependencies(source_dir, directories, requirement.copy)
 
 
 def build_with_cmake(requirement: Requirement, source_dir, configuration: Configuration, directories: Directories, force_config, force_generator):

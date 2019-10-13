@@ -16,6 +16,7 @@ from .configuration import Configuration
 from .directories import Directories, makedirs
 from .json_encoder import JsonEncoder
 from .requirement import Requirement, install_requirement
+from .quicktype import Iwd
 
 CMAKE_FILE_TEMPLATE = """\
 set(IWD_INSTALL_PREFIX {INSTALL_PREFIX})
@@ -52,8 +53,8 @@ def parse_json(file_path, schema=None):
 def parse_requirements(requirements_file_path: str):
     file_directory = os.path.dirname(__file__)
     schema = parse_json(os.path.join(file_directory, 'schema.json'))
-    data = parse_json(requirements_file_path, schema=schema)
-    return [Requirement(**x) for x in data['requirements']]
+    iwd = Iwd.from_dict(parse_json(requirements_file_path, schema=schema))
+    return iwd.requirements
 
 
 def write_cmake_file(directories):
