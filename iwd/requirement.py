@@ -8,7 +8,7 @@ import urllib.request
 from collections import namedtuple
 
 from . import patch_util
-from .configuration import Configuration
+from .configuration import Configuration, resolve_configuration_variables
 from .directories import Directories
 from .tools import untargz, download_file, git_clone
 from .quicktype import Patch, Copy
@@ -67,7 +67,7 @@ def install_requirement(
         directories: Directories,
         force_config=None,
         force_generator=None):
-    requirement.configuration.resolve_variables(configuration)
+    resolve_configuration_variables(requirement.configuration, configuration)
     source_dir = override_source_directory(
         requirement, download(requirement, directories))
     patch_util.apply_patches(source_dir, requirement.patches)
