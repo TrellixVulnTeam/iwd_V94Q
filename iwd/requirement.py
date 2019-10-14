@@ -58,6 +58,12 @@ class UserSettings:
         self.force_generator = force_generator
 
 
+class RequirementHandler:
+    def __init__(self, requirement: Requirement, directories: Directories):
+        self.requirement = requirement
+        self.directories = directories
+
+
 def install_requirement(
         requirement: Requirement,
         directories: Directories,
