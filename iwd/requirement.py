@@ -68,6 +68,7 @@ def install_requirement(
         requirement: Requirement,
         directories: Directories,
         user_settings: UserSettings):
+    requirement_handler = RequirementHandler(requirement, directories)
     requirement_set_defaults(requirement)
     resolve_configuration_variables(
         requirement.configuration, user_settings.configuration)
