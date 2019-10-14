@@ -60,6 +60,7 @@ class UserSettings:
 
 class RequirementHandler:
     def __init__(self, requirement: Requirement, directories: Directories):
+        requirement_set_defaults(requirement)
         self.requirement = requirement
         self.directories = directories
 
@@ -69,7 +70,6 @@ def install_requirement(
         directories: Directories,
         user_settings: UserSettings):
     requirement_handler = RequirementHandler(requirement, directories)
-    requirement_set_defaults(requirement)
     resolve_configuration_variables(
         requirement.configuration, user_settings.configuration)
     source_directory = download(requirement_handler)
