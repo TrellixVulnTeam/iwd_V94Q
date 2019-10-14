@@ -34,11 +34,6 @@ def get_requirement_hash(
     return m
 
 
-def requirement_set_defaults(requirement: Requirement):
-    requirement.configuration = value_or(requirement.configuration, {})
-    requirement.cmake_build = value_or(requirement.cmake_build, True)
-
-
 class UserSettings:
     def __init__(self, configuration: Configuration, force_config: str = None, force_generator: str = None):
         self.configuration = configuration
@@ -48,10 +43,14 @@ class UserSettings:
 
 class RequirementHandler:
     def __init__(self, requirement: Requirement, directories: Directories):
-        requirement_set_defaults(requirement)
+        self.__requirement_set_defaults(requirement)
         self.requirement = requirement
         self.directories = directories
         self.source_directory = download(self)
+
+    def __requirement_set_defaults(self, requirement: Requirement):
+        requirement.configuration = value_or(requirement.configuration, {})
+        requirement.cmake_build = value_or(requirement.cmake_build, True)
 
     @property
     def cmake_directory(self):
@@ -118,7 +117,7 @@ def download(requirement_handler: RequirementHandler):
     # TODO - Detect if tar contains only one folder, or packs sources without it
     if requirement.url.endswith('.git'):
         source_dir = os.path.join(
-            directories.source, name_version(requirement))
+            directories.source, requirement_handler.name_version)
         git_clone(requirement.url, source_dir, requirement.version)
         return source_dir
     elif requirement.url.endswith('.tar.gz'):
