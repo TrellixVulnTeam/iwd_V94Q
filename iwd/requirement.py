@@ -63,6 +63,7 @@ class RequirementHandler:
         requirement_set_defaults(requirement)
         self.requirement = requirement
         self.directories = directories
+        self.source_directory = download(self)
 
 
 def install_requirement(
@@ -70,16 +71,17 @@ def install_requirement(
         directories: Directories,
         user_settings: UserSettings):
     requirement_handler = RequirementHandler(requirement, directories)
-    source_directory = download(requirement_handler)
     cmake_source_directory = override_source_directory(
-        requirement, source_directory)
+        requirement, requirement_handler.source_directory)
     if requirement.patch:
-        patch_util.apply_patches(source_directory, requirement.patch)
+        patch_util.apply_patches(
+            requirement_handler.source_directory, requirement.patch)
     if requirement.cmake_build:
         build_with_cmake(requirement_handler, cmake_source_directory,
                          user_settings)
     if requirement.copy:
-        copy_dependencies(source_directory, directories, requirement.copy)
+        copy_dependencies(requirement_handler.source_directory,
+                          directories, requirement.copy)
 
 
 def build_with_cmake(requirement_handler: RequirementHandler, source_dir, user_settings: UserSettings):
