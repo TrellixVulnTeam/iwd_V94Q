@@ -51,36 +51,42 @@ def requirement_set_defaults(requirement: Requirement):
     requirement.cmake_build = value_or(requirement.cmake_build, True)
 
 
+class UserSettings:
+    def __init__(self, configuration: Configuration, force_config: str = None, force_generator: str = None):
+        self.configuration = configuration
+        self.force_config = force_config
+        self.force_generator = force_generator
+
+
 def install_requirement(
         requirement: Requirement,
-        configuration: Configuration,
         directories: Directories,
-        force_config=None,
-        force_generator=None):
+        user_settings: UserSettings):
     requirement_set_defaults(requirement)
-    resolve_configuration_variables(requirement.configuration, configuration)
+    resolve_configuration_variables(
+        requirement.configuration, user_settings.configuration)
     source_directory = download(requirement, directories)
     cmake_source_directory = override_source_directory(
         requirement, source_directory)
     if requirement.patch:
         patch_util.apply_patches(source_directory, requirement.patch)
     if requirement.cmake_build:
-        build_with_cmake(requirement, cmake_source_directory, configuration, directories,
-                         force_config, force_generator)
+        build_with_cmake(requirement, cmake_source_directory,
+                         user_settings, directories)
     if requirement.copy:
         copy_dependencies(source_directory, directories, requirement.copy)
 
 
-def build_with_cmake(requirement: Requirement, source_dir, configuration: Configuration, directories: Directories, force_config, force_generator):
+def build_with_cmake(requirement: Requirement, source_dir, user_settings: UserSettings, directories: Directories):
     build_dir = directories.make_build_directory(name_version(requirement))
     cmake = CMake(source_dir, build_dir)
-    cmake.generator = force_generator
-    cmake.build_type = force_config
-    cmake.add_options(configuration)
+    cmake.generator = user_settings.force_generator
+    cmake.build_type = user_settings.force_config
+    cmake.add_options(user_settings.configuration)
     cmake.add_options(requirement.configuration)
     cmake.configure()
     cmake.install()
-    dump_build_info(configuration, requirement,
+    dump_build_info(user_settings.configuration, requirement,
                     cmake.build_directory, directories.install)
 
 
