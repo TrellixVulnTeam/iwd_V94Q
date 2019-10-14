@@ -52,8 +52,12 @@ class RequirementHandler:
         self.requirement = requirement
         self.directories = directories
         self.source_directory = download(self)
-        self.cmake_directory = override_source_directory(
-            requirement, self.source_directory)
+        self.cmake_directory = self.__override_source_directory()
+
+    def __override_source_directory(self):
+        if self.requirement.cmake_directory is not None:
+            return os.path.join(self.source_directory, self.requirement.cmake_directory)
+        return self.source_directory
 
 
 def install_requirement(
@@ -101,12 +105,6 @@ def copy_dependencies(requirement_handler: RequirementHandler, copy_targets: lis
             target_options.sources,
             os.path.join(directories.install, target_options.destination),
             value_or(target_options.keep_paths, True))
-
-
-def override_source_directory(requirement_handler: RequirementHandler):
-    if requirement_handler.requirement.cmake_directory is not None:
-        return os.path.join(requirement_handler.source_directory, requirement_handler.requirement.cmake_directory)
-    return requirement_handler.source_directory
 
 
 def download(requirement_handler: RequirementHandler):
