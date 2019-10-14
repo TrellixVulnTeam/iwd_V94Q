@@ -52,9 +52,9 @@ class RequirementHandler:
         self.requirement = requirement
         self.directories = directories
         self.source_directory = download(self)
-        self.cmake_directory = self.__override_source_directory()
 
-    def __override_source_directory(self):
+    @property
+    def cmake_directory(self):
         if self.requirement.cmake_directory is not None:
             return os.path.join(self.source_directory, self.requirement.cmake_directory)
         return self.source_directory
