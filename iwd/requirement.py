@@ -80,8 +80,7 @@ def install_requirement(
         build_with_cmake(requirement_handler, cmake_source_directory,
                          user_settings)
     if requirement.copy:
-        copy_dependencies(requirement_handler.source_directory,
-                          directories, requirement.copy)
+        copy_dependencies(requirement_handler, requirement.copy)
 
 
 def build_with_cmake(requirement_handler: RequirementHandler, source_dir, user_settings: UserSettings):
@@ -101,7 +100,8 @@ def build_with_cmake(requirement_handler: RequirementHandler, source_dir, user_s
                     cmake.build_directory, directories.install)
 
 
-def copy_dependencies(source_directory, directories: Directories, copy_targets: list):
+def copy_dependencies(requirement_handler: RequirementHandler, copy_targets: list):
+    source_directory = requirement_handler.source_directory
     for target_options in copy_targets:
         source_dir = source_directory
         rel_source_dir = target_options.source_directory
