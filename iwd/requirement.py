@@ -77,7 +77,7 @@ def install_requirement(
         patch_util.apply_patches(
             requirement_handler.source_directory, requirement.patch)
     if requirement.cmake_build:
-        build_with_cmake(requirement_handler, requirement_handler.cmake_source_directory,
+        build_with_cmake(requirement_handler, requirement_handler.cmake_directory,
                          user_settings)
     if requirement.copy:
         copy_dependencies(requirement_handler, requirement.copy)
