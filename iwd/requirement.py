@@ -70,8 +70,6 @@ def install_requirement(
         directories: Directories,
         user_settings: UserSettings):
     requirement_handler = RequirementHandler(requirement, directories)
-    resolve_configuration_variables(
-        requirement.configuration, user_settings.configuration)
     source_directory = download(requirement_handler)
     cmake_source_directory = override_source_directory(
         requirement, source_directory)
@@ -87,6 +85,8 @@ def install_requirement(
 def build_with_cmake(requirement_handler: RequirementHandler, source_dir, user_settings: UserSettings):
     requirement = requirement_handler.requirement
     directories = requirement_handler.directories
+    resolve_configuration_variables(
+        requirement.configuration, user_settings.configuration)
     build_dir = directories.make_build_directory(name_version(requirement))
     cmake = CMake(source_dir, build_dir)
     cmake.generator = user_settings.force_generator
