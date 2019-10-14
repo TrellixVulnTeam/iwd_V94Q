@@ -72,7 +72,7 @@ def install_requirement(
     requirement_set_defaults(requirement)
     resolve_configuration_variables(
         requirement.configuration, user_settings.configuration)
-    source_directory = download(requirement, directories)
+    source_directory = download(requirement_handler)
     cmake_source_directory = override_source_directory(
         requirement, source_directory)
     if requirement.patch:
@@ -117,7 +117,9 @@ def override_source_directory(requirement: Requirement, source_directory: str):
     return source_directory
 
 
-def download(requirement: Requirement, directories: Directories):
+def download(requirement_handler: RequirementHandler):
+    requirement = requirement_handler.requirement
+    directories = requirement_handler.directories
     logging.debug('Downloading requirement %s', requirement.url)
     # TODO - Detect if tar contains only one folder, or packs sources without it
     if requirement.url.endswith('.git'):
