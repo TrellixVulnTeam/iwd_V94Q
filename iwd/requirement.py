@@ -78,13 +78,15 @@ def install_requirement(
     if requirement.patch:
         patch_util.apply_patches(source_directory, requirement.patch)
     if requirement.cmake_build:
-        build_with_cmake(requirement, cmake_source_directory,
-                         user_settings, directories)
+        build_with_cmake(requirement_handler, cmake_source_directory,
+                         user_settings)
     if requirement.copy:
         copy_dependencies(source_directory, directories, requirement.copy)
 
 
-def build_with_cmake(requirement: Requirement, source_dir, user_settings: UserSettings, directories: Directories):
+def build_with_cmake(requirement_handler: RequirementHandler, source_dir, user_settings: UserSettings):
+    requirement = requirement_handler.requirement
+    directories = requirement_handler.directories
     build_dir = directories.make_build_directory(name_version(requirement))
     cmake = CMake(source_dir, build_dir)
     cmake.generator = user_settings.force_generator
