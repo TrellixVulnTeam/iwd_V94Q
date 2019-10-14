@@ -103,10 +103,10 @@ def copy_dependencies(requirement_handler: RequirementHandler, copy_targets: lis
             value_or(target_options.keep_paths, True))
 
 
-def override_source_directory(requirement: Requirement, source_directory: str):
-    if requirement.cmake_directory is not None:
-        return os.path.join(source_directory, requirement.cmake_directory)
-    return source_directory
+def override_source_directory(requirement_handler: RequirementHandler):
+    if requirement_handler.requirement.cmake_directory is not None:
+        return os.path.join(requirement_handler.source_directory, requirement_handler.requirement.cmake_directory)
+    return requirement_handler.source_directory
 
 
 def download(requirement_handler: RequirementHandler):
