@@ -59,6 +59,10 @@ class RequirementHandler:
             return os.path.join(self.source_directory, self.requirement.cmake_directory)
         return self.source_directory
 
+    @property
+    def name_version(self):
+        return name_version(self.requirement)
+
 
 def install_requirement(
         requirement: Requirement,
