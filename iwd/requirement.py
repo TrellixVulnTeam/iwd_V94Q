@@ -16,18 +16,6 @@ from .copy_util import copy_files
 from .cmake import CMake
 
 
-def required_argument(name, dictlike):
-    if name not in dictlike.keys():
-        raise Exception(f'Missing required argument {name}')
-    return dictlike[name]
-
-
-def optional_argument(name, dictlike, default=None):
-    if name not in dictlike.keys():
-        return default
-    return dictlike[name]
-
-
 def value_or(value, default):
     return value if value is not None else default
 
