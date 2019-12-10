@@ -36,6 +36,7 @@ add_executable(
     src/main.cpp
     src/vn/directory.cpp
     src/vn/file.cpp
+    src/iwd/cmake_configuration.cpp
     src/iwd/directories.cpp
     src/iwd/parse_args.cpp
     src/iwd/requirements.cpp
