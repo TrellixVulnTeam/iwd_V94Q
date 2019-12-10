@@ -1,6 +1,8 @@
 #include <filesystem>
 #include "argparse.hpp"
+#include <nlohmann/json.hpp>
 
+namespace nl = nlohmann;
 
 struct directories
 {
@@ -14,6 +16,9 @@ int main(int argc, const char ** argv)
 {
     auto parser = argparse::ArgumentParser();
     parser.add_argument("hello");
+
+    nl::json json;
+    json["hello"] =  "world";
 
     try {
       parser.parse_args(argc, argv);

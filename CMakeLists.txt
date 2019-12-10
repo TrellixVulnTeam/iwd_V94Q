@@ -12,8 +12,14 @@ FetchContent_Declare(
     URL https://github.com/p-ranav/argparse/archive/v2.0.tar.gz
 )
 
+FetchContent_Declare(
+    get-nlohmann-json
+    URL https://github.com/nlohmann/json/archive/v3.7.3.tar.gz
+)
+
 FetchContent_MakeAvailable(
     get-argparse
+    get-nlohmann-json
 )
 
 add_executable(
@@ -31,4 +37,5 @@ target_link_libraries(
     iwd
     PRIVATE
     argparse
+    nlohmann_json
 )
