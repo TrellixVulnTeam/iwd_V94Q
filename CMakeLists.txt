@@ -17,10 +17,17 @@ FetchContent_Declare(
     URL https://github.com/nlohmann/json/archive/v3.7.3.tar.gz
 )
 
+FetchContent_Declare(
+    get-libarchive
+    URL https://www.libarchive.org/downloads/libarchive-3.4.0.tar.gz
+)
+
 FetchContent_MakeAvailable(
     get-argparse
     get-nlohmann-json
 )
+
+find_package(LibArchive REQUIRED)
 
 add_executable(
     iwd
@@ -38,4 +45,11 @@ target_link_libraries(
     PRIVATE
     argparse
     nlohmann_json
+    ${LibArchive_LIBRARIES}
+)
+
+target_include_directories(
+    iwd
+    PRIVATE
+    ${LibArchive_INCLUDE_DIRS}
 )
