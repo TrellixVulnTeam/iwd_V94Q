@@ -3,8 +3,10 @@
 
 #include "iwd/cmake_configuration.hpp"
 #include "iwd/directories.hpp"
+#include "iwd/git_clone.hpp"
 #include "iwd/parse_args.hpp"
 #include "iwd/requirements.hpp"
+#include <vn/string_utils.hpp>
 
 #include <iostream>
 
@@ -19,11 +21,14 @@ main(int argc, const char** argv)
   auto configuration =
     iwd::cmake_configuration::from_arguments(args.cmake_arguments);
 
-  for (auto arg : configuration.as_cmake_args()) {
-    std::cout << arg << std::endl;
+  for (const auto& req : requirements) {
+    if (vn::ends_with(req.get_url(), ".git")) {
+      iwd::git_clone(
+        req.get_url(),
+        directories.source_directory().path() / req.get_name(),
+        req.get_version());
+    }
   }
-  nl::json json;
-  json["hello"] = "world";
 
   return 0;
 }

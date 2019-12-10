@@ -43,6 +43,7 @@ add_executable(
     src/iwd/check_call.cpp
     src/iwd/cmake_configuration.cpp
     src/iwd/directories.cpp
+    src/iwd/git_clone.cpp
     src/iwd/parse_args.cpp
     src/iwd/requirements.cpp
 )
