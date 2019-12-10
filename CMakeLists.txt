@@ -31,7 +31,9 @@ find_package(LibArchive REQUIRED)
 
 add_executable(
     iwd
-    src/main.cpp)
+    src/main.cpp
+    src/iwd/parse_args.cpp
+)
 
 
 set_target_properties(
@@ -51,5 +53,6 @@ target_link_libraries(
 target_include_directories(
     iwd
     PRIVATE
+    src/
     ${LibArchive_INCLUDE_DIRS}
 )
