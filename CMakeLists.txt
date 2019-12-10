@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 3.12.0)
 string(TIMESTAMP DATE_TODAY "21%y%m%d")
 set(PROJECT_VERSION 1.0.${DATE_TODAY})
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 project(iwd VERSION ${PROJECT_VERSION})
 
 include(FetchContent)
