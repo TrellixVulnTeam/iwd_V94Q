@@ -32,6 +32,7 @@ find_package(LibArchive REQUIRED)
 add_executable(
     iwd
     src/main.cpp
+    src/vn/directory.cpp
     src/iwd/parse_args.cpp
 )
 
