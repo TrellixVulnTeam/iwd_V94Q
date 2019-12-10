@@ -36,6 +36,7 @@ add_executable(
     src/vn/file.cpp
     src/iwd/directories.cpp
     src/iwd/parse_args.cpp
+    src/iwd/requirements.cpp
 )
 
 
