@@ -17,6 +17,9 @@ make_message(const Args&... args);
 bool
 ends_with(std::string_view string, std::string_view ending);
 
+bool
+starts_with(std::string_view string, std::string_view beggining);
+
 } // namespace vn
 
 #include <vn/string_utils_impl.hpp>
