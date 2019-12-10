@@ -1,0 +1,8 @@
+BasedOnStyle: Mozilla
+AlignAfterOpenBracket: AlwaysBreak
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+AlignEscapedNewlines: DontAlign
+AlignOperands: false
+AlignTrailingComments: false
+FixNamespaceComments: true
