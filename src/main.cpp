@@ -3,6 +3,7 @@
 
 #include "iwd/cmake_configuration.hpp"
 #include "iwd/directories.hpp"
+#include "iwd/download_file.hpp"
 #include "iwd/git_clone.hpp"
 #include "iwd/parse_args.hpp"
 #include "iwd/requirements.hpp"
@@ -27,6 +28,9 @@ main(int argc, const char** argv)
         req.get_url(),
         directories.source_directory().path() / req.get_name(),
         req.get_version());
+    } else {
+      iwd::download_file(
+        req.get_url(), directories.cache_directory().path() / req.get_name());
     }
   }
 

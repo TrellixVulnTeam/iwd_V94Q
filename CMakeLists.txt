@@ -33,6 +33,7 @@ FetchContent_MakeAvailable(
 find_package(LibArchive REQUIRED)
 find_package(Boost 1.71.0 REQUIRED COMPONENTS system filesystem)
 find_package(Threads REQUIRED)
+find_package(CURL REQUIRED)
 
 add_executable(
     iwd
@@ -43,6 +44,7 @@ add_executable(
     src/iwd/check_call.cpp
     src/iwd/cmake_configuration.cpp
     src/iwd/directories.cpp
+    src/iwd/download_file.cpp
     src/iwd/git_clone.cpp
     src/iwd/parse_args.cpp
     src/iwd/requirements.cpp
@@ -64,6 +66,7 @@ target_link_libraries(
     Boost::system
     Boost::filesystem
     Threads::Threads
+    CURL::libcurl
 )
 
 target_include_directories(
