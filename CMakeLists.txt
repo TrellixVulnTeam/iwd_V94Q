@@ -4,6 +4,7 @@ string(TIMESTAMP DATE_TODAY "21%y%m%d")
 set(PROJECT_VERSION 1.0.${DATE_TODAY})
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(THREADS_PREFER_PTHREAD_FLAG On)
 
 project(iwd VERSION ${PROJECT_VERSION})
 
@@ -30,12 +31,15 @@ FetchContent_MakeAvailable(
 )
 
 find_package(LibArchive REQUIRED)
+find_package(Boost 1.71.0 REQUIRED COMPONENTS system filesystem)
+find_package(Threads REQUIRED)
 
 add_executable(
     iwd
     src/main.cpp
     src/vn/directory.cpp
     src/vn/file.cpp
+    src/iwd/check_call.cpp
     src/iwd/cmake_configuration.cpp
     src/iwd/directories.cpp
     src/iwd/parse_args.cpp
@@ -55,6 +59,9 @@ target_link_libraries(
     argparse
     nlohmann_json
     ${LibArchive_LIBRARIES}
+    Boost::system
+    Boost::filesystem
+    Threads::Threads
 )
 
 target_include_directories(
