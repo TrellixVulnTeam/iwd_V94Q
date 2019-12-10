@@ -25,9 +25,15 @@ FetchContent_Declare(
     URL https://www.libarchive.org/downloads/libarchive-3.4.0.tar.gz
 )
 
+FetchContent_Declare(
+    get-spdlog
+    URL https://github.com/gabime/spdlog/archive/v1.4.2.tar.gz
+)
+
 FetchContent_MakeAvailable(
     get-argparse
     get-nlohmann-json
+    get-spdlog
 )
 
 find_package(LibArchive REQUIRED)
@@ -67,6 +73,7 @@ target_link_libraries(
     Boost::filesystem
     Threads::Threads
     CURL::libcurl
+    spdlog
 )
 
 target_include_directories(
