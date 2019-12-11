@@ -23,15 +23,8 @@ main(int argc, const char** argv)
     iwd::cmake_configuration::from_arguments(args.cmake_arguments);
 
   for (const auto& req : requirements) {
-    if (vn::ends_with(req.get_url(), ".git")) {
-      iwd::git_clone(
-        req.get_url(),
-        directories.source_directory().path() / req.get_name(),
-        req.get_version());
-    } else {
-      iwd::download_file(
-        req.get_url(), directories.cache_directory().path() / req.get_name());
-    }
+    iwd::requirement_handler handler(directories, req);
+    handler.download();
   }
 
   return 0;
