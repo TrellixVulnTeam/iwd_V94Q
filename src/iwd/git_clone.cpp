@@ -16,9 +16,7 @@ git_clone(
     "clone",    "--depth", "1", "--recursive",
     "--branch", branch,    url, target_directory.string(),
   };
-  if (!std::filesystem::is_directory(target_directory)) {
-    check_call(executable, args);
-  }
+  check_call(executable, args);
 }
 
 } // namespace iwd
