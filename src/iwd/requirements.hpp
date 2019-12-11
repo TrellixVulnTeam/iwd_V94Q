@@ -22,6 +22,7 @@ struct requirement_handler
 
 private:
   iwd::directories _directories;
+  std::unique_ptr<vn::directory> _source_directory;
   quicktype::Requirement _requirement;
 };
 

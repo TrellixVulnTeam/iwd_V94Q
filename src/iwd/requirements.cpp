@@ -2,11 +2,32 @@
 
 #include "download_file.hpp"
 #include "git_clone.hpp"
+#include "iwd/extract_tarfile.hpp"
 #include "iwd/logging.hpp"
 #include <vn/file.hpp>
 #include <vn/string_utils.hpp>
 
 namespace iwd {
+
+namespace {
+void
+download_and_extract(
+  const std::string& source,
+  const std::filesystem::path& download_destination,
+  const std::filesystem::path& extract_destination)
+{
+  if (!std::filesystem::exists(download_destination)) {
+    info("Downloading {}", source);
+    iwd::download_file(source, download_destination);
+  }
+  if (!std::filesystem::exists(extract_destination)) {
+    info("Extracting {}", download_destination.string());
+    iwd::extract_tarfile(
+      download_destination, vn::directory::create(extract_destination));
+  }
+}
+
+} // namespace
 
 std::string
 name_version(const quicktype::Requirement& requirement)
@@ -27,6 +48,7 @@ requirement_handler::requirement_handler(
   const iwd::directories& directories,
   const quicktype::Requirement& req)
   : _directories(directories)
+  , _source_directory(nullptr)
   , _requirement(req)
 {}
 
@@ -43,17 +65,22 @@ requirement_handler::download()
     if (!std::filesystem::exists(source_path)) {
       info("Cloning {}", source_url);
       iwd::git_clone(source_url, source_path, _requirement.get_version());
-    } else {
-      info("Using cached version for {}", source_url);
     }
-
   } else if (vn::ends_with(source_url, "tar.gz")) {
+    download_and_extract(source_url, download_path, source_path);
 
-    if (!std::filesystem::exists(download_path)) {
-      info("Downloading {}", source_url);
-      iwd::download_file(source_url, download_path);
-    } else {
-      info("Using cached version for {}", source_url);
+    // Most of the archives contain single root directory that contains the
+    // actual content. If that is the case, make the _source_directory variable
+    // point to this single directory instead of the calculated source location.
+    // This makes setup way easier for the user.
+    auto source_directory = vn::directory(source_path);
+    const auto file_count = std::distance(
+      source_directory.list().begin(), source_directory.list().end());
+    if (file_count == 1) {
+      const auto first_item = source_directory.list().begin()->path();
+      if (std::filesystem::is_directory(first_item)) {
+        _source_directory = std::make_unique<vn::directory>(first_item);
+      }
     }
 
   } else {
@@ -61,6 +88,9 @@ requirement_handler::download()
       "Unsupported url",
       std::quoted(source_url),
       "must point to either tar.gz or git repository"));
+  }
+  if (!_source_directory) {
+    _source_directory = std::make_unique<vn::directory>(source_path);
   }
 }
 
