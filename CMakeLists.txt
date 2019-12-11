@@ -51,6 +51,7 @@ add_executable(
     src/iwd/cmake_configuration.cpp
     src/iwd/directories.cpp
     src/iwd/download_file.cpp
+    src/iwd/extract_tarfile.cpp
     src/iwd/git_clone.cpp
     src/iwd/parse_args.cpp
     src/iwd/requirements.cpp
