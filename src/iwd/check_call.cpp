@@ -49,7 +49,7 @@ check_call(
     proc.wait();
   }
 
-  if (proc.exit_code()) {
+  if (proc.exit_code() != 0) {
     throw std::runtime_error(vn::make_message(
       "Process",
       std::quoted(app_name),
