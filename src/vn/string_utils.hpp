@@ -20,6 +20,12 @@ ends_with(std::string_view string, std::string_view ending);
 bool
 starts_with(std::string_view string, std::string_view beggining);
 
+std::string
+replace_all(
+  std::string_view input,
+  std::string_view occurrences,
+  std::string_view replacement);
+
 } // namespace vn
 
 #include <vn/string_utils_impl.hpp>
