@@ -26,6 +26,9 @@ replace_all(
   std::string_view occurrences,
   std::string_view replacement);
 
+std::string
+regex_escape(std::string_view text);
+
 } // namespace vn
 
 #include <vn/string_utils_impl.hpp>

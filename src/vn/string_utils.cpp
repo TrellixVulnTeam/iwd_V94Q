@@ -30,4 +30,47 @@ replace_all(
   return result;
 }
 
+std::string
+regex_escape(std::string_view text)
+{
+  std::string result;
+  // Reserve size for the worst case scenario - each character needs to be
+  // escaped
+  result.reserve(text.size() * 2u);
+  for (const auto character : text) {
+    switch (character) {
+      case '(':
+      case ')':
+      case '[':
+      case ']':
+      case '{':
+      case '}':
+      case '?':
+      case '*':
+      case '+':
+      case '-':
+      case '|':
+      case '^':
+      case '$':
+      case '\\':
+      case '.':
+      case '\t':
+      case '\n':
+      case '\r':
+      case '\v':
+      case '\f': {
+        result.push_back('\\');
+        result.push_back(character);
+        break;
+      }
+      default: {
+        result.push_back(character);
+        break;
+      }
+    }
+  }
+  result.shrink_to_fit();
+  return result;
+}
+
 } // namespace vn
