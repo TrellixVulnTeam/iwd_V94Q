@@ -46,6 +46,7 @@ add_executable(
     src/main.cpp
     src/vn/directory.cpp
     src/vn/file.cpp
+    src/vn/fnmatch.cpp
     src/vn/string_utils.cpp
     src/iwd/check_call.cpp
     src/iwd/cmake_configuration.cpp
