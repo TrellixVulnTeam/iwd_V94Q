@@ -13,8 +13,9 @@ struct directory
   static directory current();
   static directory create(const std::filesystem::path& path);
 
-  vn::iterator_range<std::filesystem::recursive_directory_iterator> walk();
-  vn::iterator_range<std::filesystem::directory_iterator> list();
+  vn::iterator_range<std::filesystem::recursive_directory_iterator> walk()
+    const;
+  vn::iterator_range<std::filesystem::directory_iterator> list() const;
 
   directory(const directory&) = default;
   directory& operator=(const directory&) = default;

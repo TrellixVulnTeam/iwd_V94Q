@@ -24,7 +24,7 @@ directory::current()
 }
 
 vn::iterator_range<std::filesystem::recursive_directory_iterator>
-directory::walk()
+directory::walk() const
 {
   return make_iterator_range(
     std::filesystem::recursive_directory_iterator(path()),
@@ -32,7 +32,7 @@ directory::walk()
 }
 
 vn::iterator_range<std::filesystem::directory_iterator>
-directory::list()
+directory::list() const
 {
   return make_iterator_range(
     std::filesystem::directory_iterator(path()),
