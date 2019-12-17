@@ -15,11 +15,11 @@ translate_fnmatch_expr(std::string_view pattern)
     const auto character = pattern[i];
     switch (character) {
       case '*': {
-        result.append(".*");
+        result.append("[^/]*");
         break;
       }
       case '?': {
-        result.append(".?");
+        result.append("[^/]?");
         break;
       }
       case '[': {
