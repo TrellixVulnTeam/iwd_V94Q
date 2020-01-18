@@ -13,6 +13,10 @@ std::pair<
   std::optional<std::filesystem::path>>
 split_path(const std::filesystem::path& path);
 
-}
+// Test whether a path exists.  Returns True for broken symbolic links
+bool
+lexists(const std::filesystem::path& p);
+
+} // namespace vn
 
 #endif

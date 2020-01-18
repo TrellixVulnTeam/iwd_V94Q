@@ -13,4 +13,10 @@ split_path(const std::filesystem::path& path)
     path.has_filename() ? std::make_optional(path.filename()) : std::nullopt);
 }
 
+bool
+lexists(const std::filesystem::path& p)
+{
+  return std::filesystem::exists(p) || std::filesystem::is_symlink(p);
+}
+
 } // namespace vn
