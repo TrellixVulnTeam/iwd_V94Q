@@ -11,6 +11,7 @@ project(iwd VERSION ${PROJECT_VERSION})
 include(FetchContent)
 
 set(JSON_BuildTests OFF CACHE BOOL "" FORCE)
+set(CATCH_BUILD_TESTING OFF CACHE BOOL "" FORCE)
 
 FetchContent_Declare(
     get-argparse
@@ -32,10 +33,16 @@ FetchContent_Declare(
     URL https://github.com/gabime/spdlog/archive/v1.4.2.tar.gz
 )
 
+FetchContent_Declare(
+    get-catch2
+    URL https://github.com/catchorg/Catch2/archive/v2.11.1.tar.gz
+)
+
 FetchContent_MakeAvailable(
     get-argparse
     get-nlohmann-json
     get-spdlog
+    get-catch2
 )
 
 find_package(LibArchive REQUIRED)
