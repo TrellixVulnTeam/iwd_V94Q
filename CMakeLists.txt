@@ -10,6 +10,8 @@ project(iwd VERSION ${PROJECT_VERSION})
 
 include(FetchContent)
 
+set(JSON_BuildTests OFF CACHE BOOL "" FORCE)
+
 FetchContent_Declare(
     get-argparse
     URL https://github.com/p-ranav/argparse/archive/v2.0.tar.gz
