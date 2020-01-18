@@ -41,13 +41,17 @@ find_package(Boost 1.71.0 REQUIRED COMPONENTS system filesystem)
 find_package(Threads REQUIRED)
 find_package(CURL REQUIRED)
 
-add_executable(
-    iwd
-    src/main.cpp
+add_library(
+    vn
     src/vn/directory.cpp
     src/vn/file.cpp
     src/vn/fnmatch.cpp
     src/vn/string_utils.cpp
+)
+
+add_executable(
+    iwd
+    src/main.cpp
     src/iwd/check_call.cpp
     src/iwd/cmake_configuration.cpp
     src/iwd/directories.cpp
@@ -61,6 +65,7 @@ add_executable(
 
 set_target_properties(
     iwd
+    vn
     PROPERTIES
     CXX_STANDARD 17
 )
@@ -68,6 +73,7 @@ set_target_properties(
 target_link_libraries(
     iwd
     PRIVATE
+    vn
     argparse
     nlohmann_json
     ${LibArchive_LIBRARIES}
@@ -76,6 +82,12 @@ target_link_libraries(
     Threads::Threads
     CURL::libcurl
     spdlog
+)
+
+target_include_directories(
+    vn
+    PUBLIC
+    src
 )
 
 target_include_directories(
