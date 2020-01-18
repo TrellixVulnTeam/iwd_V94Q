@@ -56,6 +56,7 @@ add_library(
     src/vn/file.cpp
     src/vn/fnmatch.cpp
     src/vn/string_utils.cpp
+    src/vn/path.cpp
 )
 
 add_executable(
@@ -114,6 +115,7 @@ add_executable(
     vn-tests
     test/vn/main.cpp
     test/vn/fnmatch.cpp
+    test/vn/path.cpp
 )
 
 target_link_libraries(
