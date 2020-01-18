@@ -7,6 +7,13 @@
 #include <string_view>
 
 namespace vn {
+namespace detail {
+
+std::string
+translate_fnmatch_expr(std::string_view pattern);
+
+}
+
 struct fnmatch
 {
 public:

@@ -4,7 +4,7 @@
 
 namespace vn {
 
-namespace {
+namespace detail {
 
 std::string
 translate_fnmatch_expr(std::string_view pattern)
@@ -19,7 +19,7 @@ translate_fnmatch_expr(std::string_view pattern)
         break;
       }
       case '?': {
-        result.append(".?");
+        result.append(".");
         break;
       }
       case '[': {
@@ -27,12 +27,18 @@ translate_fnmatch_expr(std::string_view pattern)
         if (j < pattern.length() && pattern[j] == '!') {
           j += 1;
         }
+
         if (j < pattern.length() && pattern[j] == ']') {
           j += 1;
         }
 
-        if (j = pattern.find(']', j); j != std::string_view::npos) {
-          auto stuff = vn::replace_all(pattern.substr(i + 1, j), "\\", "\\\\");
+        while (j < pattern.length() && pattern[j] != ']') {
+          ++j;
+        }
+
+        if (j < pattern.length()) {
+          const auto substr = pattern.substr(i + 1u, j - (i + 1u));
+          auto stuff = vn::replace_all(substr, "\\", "\\\\");
           i = j + 1;
 
           if (stuff[0] == '!') {
@@ -56,10 +62,10 @@ translate_fnmatch_expr(std::string_view pattern)
   result.shrink_to_fit();
   return result;
 }
-} // namespace
+} // namespace detail
 
 fnmatch::fnmatch(std::string_view pattern)
-  : _pattern(translate_fnmatch_expr(pattern))
+  : _pattern(detail::translate_fnmatch_expr(pattern), std::regex::ECMAScript)
 {}
 
 bool
