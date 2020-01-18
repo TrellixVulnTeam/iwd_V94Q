@@ -105,3 +105,28 @@ target_include_directories(
     src/
     ${LibArchive_INCLUDE_DIRS}
 )
+
+enable_testing()
+include(CTest)
+include(${get-catch2_SOURCE_DIR}/contrib/ParseAndAddCatchTests.cmake)
+
+add_executable(
+    vn-tests
+    test/vn/main.cpp
+    test/vn/fnmatch.cpp
+)
+
+target_link_libraries(
+    vn-tests
+    PRIVATE
+        vn
+        Catch2::Catch2
+)
+
+set_target_properties(
+    vn-tests
+    PROPERTIES
+    CXX_STANDARD 17
+)
+
+ParseAndAddCatchTests(vn-tests)
