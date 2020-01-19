@@ -57,6 +57,7 @@ add_library(
     src/vn/fnmatch.cpp
     src/vn/string_utils.cpp
     src/vn/path.cpp
+    src/vn/glob.cpp
 )
 
 add_executable(
