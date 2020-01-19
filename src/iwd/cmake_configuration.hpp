@@ -21,9 +21,16 @@ struct cmake_configuration
   static cmake_configuration from_arguments(
     const std::vector<std::string>& arguments);
 
+  cmake_configuration override_with(const cmake_configuration& parent) const;
+
   std::vector<std::string> as_cmake_args() const;
 
+  void set_argument(const std::string& key, const std::string& value);
+  std::optional<std::string> get_argument(const std::string& key) const;
+
 private:
+  std::optional<nlohmann::json> get_argument_obj(const std::string& key) const;
+  quicktype_config_t::element_type configuration_copy() const;
   quicktype_config_t _configuration;
 };
 

@@ -2,6 +2,7 @@
 
 #include <iomanip>
 #include <regex>
+#include <vn/string_template.hpp>
 #include <vn/string_utils.hpp>
 
 namespace iwd {
@@ -18,6 +19,14 @@ std::string
 make_cmake_arg(const std::string& key, const std::string& value)
 {
   return "-D" + key + "=" + value;
+}
+
+vn::string_template::value_provider_functor
+make_value_provider(const cmake_configuration& config)
+{
+  return [&config](const std::string& key) -> std::optional<std::string> {
+    return config.get_argument(key);
+  };
 }
 
 } // namespace
@@ -63,6 +72,68 @@ cmake_configuration::from_arguments(const std::vector<std::string>& arguments)
     config._configuration->insert_or_assign(name, value);
   }
   return config;
-} // namespace iwd
+}
+
+std::optional<std::string>
+cmake_configuration::get_argument(const std::string& key) const
+{
+  auto it = _configuration->find(key);
+  if (it != _configuration->end()) {
+    return it->second.get<std::string>();
+  }
+  return std::nullopt;
+}
+
+cmake_configuration
+cmake_configuration::override_with(const cmake_configuration& parent) const
+{
+  cmake_configuration result(nullptr);
+  auto value_provider = make_value_provider(parent);
+
+  for (const auto& [k, v] : *_configuration) {
+
+    std::smatch match;
+    auto override_value = parent.get_argument(k);
+
+    if (override_value) {
+      // Set argument value from parent
+      result.set_argument(k, *override_value);
+    } else {
+      // Set argument from current config, and try to override all $(VARS) with
+      // parent config
+      result.set_argument(
+        k, vn::render_template(v.get<std::string>(), value_provider));
+    }
+  }
+
+  for (const auto& [k, v] : parent.configuration_copy()) {
+    result.set_argument(k, v.get<std::string>());
+  }
+  return result;
+}
+
+std::optional<nlohmann::json>
+cmake_configuration::get_argument_obj(const std::string& key) const
+{
+  auto it = _configuration->find(key);
+  if (it != _configuration->end()) {
+    return it->second;
+  }
+  return std::nullopt;
+}
+
+void
+cmake_configuration::set_argument(
+  const std::string& key,
+  const std::string& value)
+{
+  _configuration->insert(std::make_pair(key, nlohmann::json(value)));
+}
+
+quicktype_config_t::element_type
+cmake_configuration::configuration_copy() const
+{
+  return *_configuration;
+}
 
 } // namespace iwd
