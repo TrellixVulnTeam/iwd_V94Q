@@ -58,6 +58,7 @@ add_library(
     src/vn/string_utils.cpp
     src/vn/path.cpp
     src/vn/glob.cpp
+    src/vn/string_template.cpp
 )
 
 add_executable(
@@ -117,6 +118,7 @@ add_executable(
     test/vn/main.cpp
     test/vn/fnmatch.cpp
     test/vn/path.cpp
+    test/vn/string_template.cpp
 )
 
 target_link_libraries(
