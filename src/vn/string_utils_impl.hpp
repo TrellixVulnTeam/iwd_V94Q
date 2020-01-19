@@ -50,6 +50,22 @@ join(const std::string& base, const Args&... args)
   return writer.result();
 }
 
+template<typename Iterator>
+std::string
+join_range(const std::string& base, vn::iterator_range<Iterator> range)
+{
+  std::stringstream ss;
+  if (std::distance(range.begin(), range.end()) == 0u) {
+    return {};
+  }
+  ss << *(range.begin());
+  for (const auto& el :
+       make_iterator_range(std::next(range.begin()), range.end())) {
+    ss << base << el;
+  }
+  return ss.str();
+}
+
 template<typename... Args>
 std::string
 make_message(const Args&... args)

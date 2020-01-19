@@ -3,12 +3,17 @@
 
 #include <string>
 #include <string_view>
+#include <vn/iterator_range.hpp>
 
 namespace vn {
 
 template<typename... Args>
 std::string
 join(const std::string& base, const Args&... args);
+
+template<typename Iterator>
+std::string
+join_range(const std::string& base, vn::iterator_range<Iterator> range);
 
 template<typename... Args>
 std::string
