@@ -2,7 +2,6 @@
 
 #include <iomanip>
 #include <sstream>
-#include <vn/regex.hpp>
 #include <vn/string_utils.hpp>
 
 namespace vn {
