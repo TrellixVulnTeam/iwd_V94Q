@@ -39,6 +39,26 @@ join_impl(join_writer& writer, const First& first, const Rest&... rest)
   (writer.write(rest), ...);
 }
 
+template<typename T>
+std::basic_string<T>
+replace_all(
+  std::basic_string_view<T> input,
+  std::basic_string_view<T> occurrences,
+  std::basic_string_view<T> replacement)
+{
+  using string_t = std::basic_string<T>;
+  using string_view_t = std::basic_string_view<T>;
+  using size_type = typename string_view_t::size_type;
+
+  string_t result(input);
+  size_type index = result.find(occurrences, 0u);
+  for (; index != string_t::npos; index = result.find(occurrences, index)) {
+    result.replace(index, occurrences.length(), replacement);
+    index += replacement.length();
+  }
+  return result;
+}
+
 } // namespace detail
 
 template<typename... Args>

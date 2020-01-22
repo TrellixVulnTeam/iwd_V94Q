@@ -16,21 +16,6 @@ starts_with(std::string_view string, std::string_view beggining)
 }
 
 std::string
-replace_all(
-  std::string_view input,
-  std::string_view occurrence,
-  std::string_view replacement)
-{
-  std::string result(input);
-  std::string::size_type index = index = result.find(occurrence, 0u);
-  for (; index != std::string::npos; index = result.find(occurrence, index)) {
-    result.replace(index, occurrence.length(), replacement);
-    index += replacement.length();
-  }
-  return result;
-}
-
-std::string
 regex_escape(std::string_view text)
 {
   std::string result;
@@ -71,6 +56,26 @@ regex_escape(std::string_view text)
   }
   result.shrink_to_fit();
   return result;
+}
+
+std::string
+replace_all(
+  std::string_view input,
+  std::string_view occurrences,
+  std::string_view replacement)
+{
+  return detail::replace_all<std::string::value_type>(
+    input, occurrences, replacement);
+}
+
+std::wstring
+replace_all(
+  std::wstring_view input,
+  std::wstring_view occurrences,
+  std::wstring_view replacement)
+{
+  return detail::replace_all<std::wstring::value_type>(
+    input, occurrences, replacement);
 }
 
 } // namespace vn

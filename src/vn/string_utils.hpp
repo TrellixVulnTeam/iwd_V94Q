@@ -7,6 +7,15 @@
 
 namespace vn {
 
+namespace detail {
+template<typename T>
+std::basic_string<T>
+replace_all(
+  std::basic_string_view<T> input,
+  std::basic_string_view<T> occurrences,
+  std::basic_string_view<T> replacement);
+}
+
 template<typename... Args>
 std::string
 join(const std::string& base, const Args&... args);
@@ -26,13 +35,19 @@ bool
 starts_with(std::string_view string, std::string_view beggining);
 
 std::string
+regex_escape(std::string_view text);
+
+std::string
 replace_all(
   std::string_view input,
   std::string_view occurrences,
   std::string_view replacement);
 
-std::string
-regex_escape(std::string_view text);
+std::wstring
+replace_all(
+  std::wstring_view input,
+  std::wstring_view occurrences,
+  std::wstring_view replacement);
 
 } // namespace vn
 
