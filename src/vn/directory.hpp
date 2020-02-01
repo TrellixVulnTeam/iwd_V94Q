@@ -32,7 +32,7 @@ private:
 };
 
 directory
-create_directories(std::filesystem::path& directory_path);
+create_directories(const std::filesystem::path& directory_path);
 
 } // namespace vn
 
