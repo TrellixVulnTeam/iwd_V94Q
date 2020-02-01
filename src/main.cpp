@@ -8,11 +8,17 @@
 #include "iwd/git_clone.hpp"
 #include "iwd/parse_args.hpp"
 #include "iwd/requirements.hpp"
+#include <vn/file.hpp>
+#include <vn/string_template.hpp>
 #include <vn/string_utils.hpp>
 
 #include <iostream>
 
 namespace nl = nlohmann;
+
+constexpr auto iwd_cmake_file_template =
+  "set(IWD_INSTALL_PREFIX $(INSTALL_PREFIX))\n"
+  "set(CMAKE_PREFIX_PATH $(INSTALL_PREFIX))";
 
 int
 main(int argc, const char** argv)
@@ -32,6 +38,17 @@ main(int argc, const char** argv)
     handler.configure(configuration);
     handler.install();
   }
+
+  const auto iwd_cmake_contents = vn::render_template(
+    iwd_cmake_file_template,
+    [&directories](const std::string& key) -> std::optional<std::string> {
+      if (key == "INSTALL_PREFIX") {
+        return directories.install_directory().path().generic_string();
+      }
+      return std::nullopt;
+    });
+
+  vn::create_text_file(args.build_directory / "iwd.cmake", iwd_cmake_contents);
 
   return 0;
 }
