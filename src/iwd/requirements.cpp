@@ -139,8 +139,7 @@ requirement_handler::configure(const iwd::cmake_configuration& root)
   info(
     "cmake {}",
     vn::join_range(" ", vn::make_iterator_range(args.begin(), args.end())));
-
-  iwd::check_call(cmake_program_name, args);
+  _domain.cmake().run(args);
 }
 
 void
@@ -155,7 +154,7 @@ requirement_handler::install()
   info(
     "cmake {}",
     vn::join_range(" ", vn::make_iterator_range(args.begin(), args.end())));
-  iwd::check_call(cmake_program_name, args);
+  _domain.cmake().run(args);
 }
 
 bool
