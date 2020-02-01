@@ -53,7 +53,7 @@ requirement_handler::requirement_handler(
 {}
 
 void
-requirement_handler::download()
+requirement_handler::source()
 {
   const auto namever = name_version(_requirement);
   const auto source_url = _requirement.get_url();

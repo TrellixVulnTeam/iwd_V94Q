@@ -18,7 +18,7 @@ struct requirement_handler
     const iwd::directories& directories,
     const quicktype::Requirement& req);
 
-  void download();
+  void source();
 
 private:
   iwd::directories _directories;

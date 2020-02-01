@@ -24,7 +24,7 @@ main(int argc, const char** argv)
 
   for (const auto& req : requirements) {
     iwd::requirement_handler handler(directories, req);
-    handler.download();
+    handler.source();
   }
 
   return 0;
