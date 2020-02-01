@@ -67,6 +67,7 @@ add_executable(
     src/iwd/check_call.cpp
     src/iwd/cmake_configuration.cpp
     src/iwd/directories.cpp
+    src/iwd/domain.cpp
     src/iwd/download_file.cpp
     src/iwd/executable.cpp
     src/iwd/extract_tarfile.cpp
