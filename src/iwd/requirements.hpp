@@ -1,5 +1,6 @@
 #include "iwd/quicktype/iwd.hpp"
 
+#include "iwd/cmake_configuration.hpp"
 #include "iwd/directories.hpp"
 #include <filesystem>
 #include <vector>
@@ -19,10 +20,13 @@ struct requirement_handler
     const quicktype::Requirement& req);
 
   void source();
+  void configure(const iwd::cmake_configuration& configuration);
 
 private:
+  bool is_cmake_build() const noexcept;
   iwd::directories _directories;
   std::unique_ptr<vn::directory> _source_directory;
+  std::unique_ptr<vn::directory> _build_directory;
   quicktype::Requirement _requirement;
 };
 

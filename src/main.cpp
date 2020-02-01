@@ -25,6 +25,7 @@ main(int argc, const char** argv)
   for (const auto& req : requirements) {
     iwd::requirement_handler handler(directories, req);
     handler.source();
+    handler.configure(configuration);
   }
 
   return 0;

@@ -2,6 +2,7 @@
 
 #include "download_file.hpp"
 #include "git_clone.hpp"
+#include "iwd/check_call.hpp"
 #include "iwd/extract_tarfile.hpp"
 #include "iwd/logging.hpp"
 #include <vn/file.hpp>
@@ -25,6 +26,13 @@ download_and_extract(
     iwd::extract_tarfile(
       download_destination, vn::directory::create(extract_destination));
   }
+}
+
+template<typename... Args>
+std::vector<std::string>
+make_args(Args&&... args)
+{
+  return std::vector<std::string>{ std::forward<Args>(args)... };
 }
 
 } // namespace
@@ -94,6 +102,49 @@ requirement_handler::source()
   if (!_source_directory) {
     _source_directory = std::make_unique<vn::directory>(source_path);
   }
+}
+
+void
+requirement_handler::configure(const iwd::cmake_configuration& root)
+{
+
+  const auto config =
+    cmake_configuration(_requirement.get_configuration()).override_with(root);
+
+  const auto proc_args = config.as_cmake_args();
+  const auto build_path =
+    _directories.build_directory().path() / name_version(_requirement);
+
+  if (!_build_directory) {
+    _build_directory =
+      std::make_unique<vn::directory>(vn::directory::create(build_path));
+  }
+
+  // Return early if this is not a cmake build
+  if (!is_cmake_build()) {
+    return;
+  }
+
+  // Find the path to CMakeLists directory
+  const auto cmake_source_directory = _requirement.get_cmake_directory()
+    ? _source_directory->path() / *_requirement.get_cmake_directory()
+    : _source_directory->path();
+
+  auto args =
+    make_args("-S", cmake_source_directory, "-B", _build_directory->path());
+  args.insert(args.end(), proc_args.begin(), proc_args.end());
+
+  info(
+    "cmake {}",
+    vn::join_range(" ", vn::make_iterator_range(args.begin(), args.end())));
+
+  iwd::check_call("cmake", args);
+}
+
+bool
+requirement_handler::is_cmake_build() const noexcept
+{
+  return !_requirement.get_cmake_build() || *_requirement.get_cmake_build();
 }
 
 } // namespace iwd
