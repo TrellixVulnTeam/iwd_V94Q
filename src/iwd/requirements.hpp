@@ -21,6 +21,7 @@ struct requirement_handler
 
   void source();
   void configure(const iwd::cmake_configuration& configuration);
+  void install();
 
 private:
   bool is_cmake_build() const noexcept;

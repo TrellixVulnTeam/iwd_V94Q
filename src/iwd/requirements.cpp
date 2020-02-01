@@ -141,6 +141,21 @@ requirement_handler::configure(const iwd::cmake_configuration& root)
   iwd::check_call("cmake", args);
 }
 
+void
+requirement_handler::install()
+{
+  if (!is_cmake_build()) {
+    return;
+  }
+  const auto args = make_args(
+    "--build", _build_directory->path().string(), "--target", "install");
+
+  info(
+    "cmake {}",
+    vn::join_range(" ", vn::make_iterator_range(args.begin(), args.end())));
+  iwd::check_call("cmake", args);
+}
+
 bool
 requirement_handler::is_cmake_build() const noexcept
 {

@@ -26,6 +26,7 @@ main(int argc, const char** argv)
     iwd::requirement_handler handler(directories, req);
     handler.source();
     handler.configure(configuration);
+    handler.install();
   }
 
   return 0;
