@@ -27,7 +27,7 @@ main(int argc, const char** argv)
     "CMAKE_INSTALL_PREFIX", directories.install_directory().path().string());
 
   for (const auto& req : requirements) {
-    iwd::requirement_handler handler(directories, req);
+    iwd::requirement_handler handler(domain, req);
     handler.source();
     handler.configure(configuration);
     handler.install();

@@ -55,9 +55,9 @@ parse_requirements(const std::filesystem::path& iwd_config_path)
 }
 
 requirement_handler::requirement_handler(
-  const iwd::directories& directories,
+  const iwd::domain& domain,
   const quicktype::Requirement& req)
-  : _directories(directories)
+  : _domain(domain)
   , _source_directory(nullptr)
   , _requirement(req)
 {}
@@ -67,8 +67,8 @@ requirement_handler::source()
 {
   const auto namever = name_version(_requirement);
   const auto source_url = _requirement.get_url();
-  const auto source_path = _directories.source_directory().path() / namever;
-  const auto download_path = _directories.cache_directory().path() / namever;
+  const auto source_path = _domain.dirs().source_directory().path() / namever;
+  const auto download_path = _domain.dirs().cache_directory().path() / namever;
 
   if (vn::ends_with(source_url, ".git")) {
 
@@ -115,7 +115,7 @@ requirement_handler::configure(const iwd::cmake_configuration& root)
 
   const auto proc_args = config.as_cmake_args();
   const auto build_path =
-    _directories.build_directory().path() / name_version(_requirement);
+    _domain.dirs().build_directory().path() / name_version(_requirement);
 
   if (!_build_directory) {
     _build_directory =
