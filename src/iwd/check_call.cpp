@@ -21,7 +21,7 @@ namespace bp = boost::process;
 void
 check_call(
   const std::string& app_name,
-  std::vector<std::string> proc_args,
+  const std::vector<std::string>& proc_args,
   const check_call_arguments& args)
 {
   const auto executable_path = bp::search_path(app_name);

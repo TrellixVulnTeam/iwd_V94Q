@@ -19,7 +19,7 @@ struct check_call_arguments
 void
 check_call(
   const std::string & app_name,
-  std::vector<std::string> proc_args,
+  const std::vector<std::string>& proc_args,
   const check_call_arguments& args = {});
 
 } // namespace iwd
