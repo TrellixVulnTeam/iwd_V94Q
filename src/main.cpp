@@ -21,6 +21,8 @@ main(int argc, const char** argv)
   const auto requirements = iwd::parse_requirements("iwd.json");
   auto configuration =
     iwd::cmake_configuration::from_arguments(args.cmake_arguments);
+  configuration.set_argument(
+    "CMAKE_INSTALL_PREFIX", directories.install_directory().path().string());
 
   for (const auto& req : requirements) {
     iwd::requirement_handler handler(directories, req);
