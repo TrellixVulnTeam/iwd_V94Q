@@ -8,27 +8,22 @@
 
 namespace iwd {
 
+namespace bp = boost::process;
+
 namespace {
 boost::filesystem::path
 to_boost_path(const std::filesystem::path& path)
 {
   return boost::filesystem::path(path.string());
 }
-} // namespace
-
-namespace bp = boost::process;
 
 void
 check_call(
   const std::string& app_name,
+  const boost::filesystem::path& executable_path,
   const std::vector<std::string>& proc_args,
   const check_call_arguments& args)
 {
-  const auto executable_path = bp::search_path(app_name);
-  if (executable_path.empty()) {
-    throw std::runtime_error(
-      vn::make_message("Could not resolve path to", app_name, " executable"));
-  }
   const auto working_directory = to_boost_path(
     args.working_directory.value_or(vn::directory::current()).path());
 
@@ -58,4 +53,19 @@ check_call(
   }
 }
 
+} // namespace
+
+void
+check_call(
+  const std::string& app_name,
+  const std::vector<std::string>& proc_args,
+  const check_call_arguments& args)
+{
+  const auto executable_path = bp::search_path(app_name);
+  if (executable_path.empty()) {
+    throw std::runtime_error(
+      vn::make_message("Could not resolve path to", app_name, " executable"));
+  }
+  check_call(app_name, executable_path, proc_args, args);
+}
 } // namespace iwd
