@@ -18,7 +18,13 @@ struct check_call_arguments
 
 void
 check_call(
-  const std::string & app_name,
+  const std::string& app_name,
+  const std::vector<std::string>& proc_args,
+  const check_call_arguments& args = {});
+
+void
+check_call(
+  const std::filesystem::path& app_path,
   const std::vector<std::string>& proc_args,
   const check_call_arguments& args = {});
 

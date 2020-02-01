@@ -68,4 +68,19 @@ check_call(
   }
   check_call(app_name, executable_path, proc_args, args);
 }
+
+void
+check_call(
+  const std::filesystem::path& app_path,
+  const std::vector<std::string>& proc_args,
+  const check_call_arguments& args)
+{
+  if (!std::filesystem::exists(app_path)) {
+    throw std::runtime_error(
+      vn::make_message("File at path", app_path.string(), "does not exist"));
+  }
+  return check_call(
+    app_path.filename(), to_boost_path(app_path), proc_args, args);
+}
+
 } // namespace iwd

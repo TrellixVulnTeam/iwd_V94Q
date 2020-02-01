@@ -28,6 +28,8 @@ download_and_extract(
   }
 }
 
+std::string cmake_program_name = "cmake";
+
 template<typename... Args>
 std::vector<std::string>
 make_args(Args&&... args)
@@ -138,7 +140,7 @@ requirement_handler::configure(const iwd::cmake_configuration& root)
     "cmake {}",
     vn::join_range(" ", vn::make_iterator_range(args.begin(), args.end())));
 
-  iwd::check_call("cmake", args);
+  iwd::check_call(cmake_program_name, args);
 }
 
 void
@@ -153,7 +155,7 @@ requirement_handler::install()
   info(
     "cmake {}",
     vn::join_range(" ", vn::make_iterator_range(args.begin(), args.end())));
-  iwd::check_call("cmake", args);
+  iwd::check_call(cmake_program_name, args);
 }
 
 bool
