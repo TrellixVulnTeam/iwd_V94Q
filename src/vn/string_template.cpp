@@ -26,11 +26,7 @@ get_value_or_throw(
 
 string_template::string_template(std::string_view string)
   : _template(string)
-{
-  if (_template.empty()) {
-    throw std::invalid_argument("Template string is empty");
-  }
-}
+{}
 
 std::string
 string_template::render(value_provider_functor functor)
