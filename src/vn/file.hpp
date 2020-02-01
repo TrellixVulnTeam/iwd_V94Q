@@ -9,6 +9,11 @@ namespace vn {
 std::string
 read_whole_file(const std::filesystem::path& file_path);
 
-}
+void
+create_text_file(
+  const std::filesystem::path& file_path,
+  std::string_view contents);
+
+} // namespace vn
 
 #endif

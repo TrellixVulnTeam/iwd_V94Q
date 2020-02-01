@@ -21,4 +21,19 @@ read_whole_file(const std::filesystem::path& file_path)
   throw std::system_error(std::error_code(errno, std::system_category()));
 }
 
+void
+create_text_file(
+  const std::filesystem::path& file_path,
+  std::string_view contents)
+{
+  std::FILE* fp = std::fopen(file_path.c_str(), "w");
+  if (fp) {
+    const auto bytes_written =
+      std::fwrite(contents.data(), sizeof(char), contents.size(), fp);
+    std::fclose(fp);
+    return;
+  }
+  throw std::system_error(std::error_code(errno, std::system_category()));
+}
+
 } // namespace vn
