@@ -73,6 +73,8 @@ requirement_handler::download()
     // actual content. If that is the case, make the _source_directory variable
     // point to this single directory instead of the calculated source location.
     // This makes setup way easier for the user.
+    // TODO - Make it so, that if that is the case, the intermediate directory
+    // is moved as a source
     auto source_directory = vn::directory(source_path);
     const auto file_count = std::distance(
       source_directory.list().begin(), source_directory.list().end());
