@@ -56,3 +56,11 @@ TEST_CASE("string split", "[string_utils]")
     vn::split(",a,,b,c,d", ",", false),
     Catch::Equals<std::string_view>({ "a", "b", "c", "d" }));
 }
+
+TEST_CASE("has_digits_only", "[string_utils]")
+{
+  REQUIRE(vn::has_digits_only("0123") == true);
+  REQUIRE(vn::has_digits_only("") == true);
+  REQUIRE(vn::has_digits_only("ab0123") == false);
+  REQUIRE(vn::has_digits_only("ab") == false);
+}

@@ -61,6 +61,9 @@ replace_all(
 std::vector<std::string_view>
 split(std::string_view in, std::string_view separator, bool allow_empty = true);
 
+bool
+has_digits_only(std::string_view text) noexcept;
+
 } // namespace vn
 
 #include <vn/string_utils_impl.hpp>

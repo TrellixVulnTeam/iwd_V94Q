@@ -1,5 +1,8 @@
 #include <vn/string_utils.hpp>
 
+#include <algorithm>
+#include <cctype>
+
 namespace vn {
 bool
 ends_with(std::string_view string, std::string_view ending)
@@ -82,6 +85,13 @@ std::vector<std::string_view>
 split(std::string_view in, std::string_view separator, bool allow_empty)
 {
   return detail::split(in, separator, allow_empty);
+}
+
+bool
+has_digits_only(std::string_view text) noexcept
+{
+  return std::all_of(
+    text.begin(), text.end(), [](unsigned char c) { return std::isdigit(c); });
 }
 
 } // namespace vn
