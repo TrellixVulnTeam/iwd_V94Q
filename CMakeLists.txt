@@ -121,6 +121,7 @@ add_executable(
     test/vn/fnmatch.cpp
     test/vn/path.cpp
     test/vn/string_template.cpp
+    test/vn/string_utils.cpp
 )
 
 target_link_libraries(
