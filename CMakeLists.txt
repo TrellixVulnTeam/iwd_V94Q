@@ -59,6 +59,7 @@ add_library(
     src/vn/path.cpp
     src/vn/glob.cpp
     src/vn/string_template.cpp
+    src/vn/semantic_version.cpp
 )
 
 add_executable(
@@ -121,6 +122,7 @@ add_executable(
     test/vn/fnmatch.cpp
     test/vn/path.cpp
     test/vn/string_template.cpp
+    test/vn/semantic_version.cpp
     test/vn/string_utils.cpp
     test/vn/string_conversions.cpp
 )
