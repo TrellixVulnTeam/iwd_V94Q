@@ -12,7 +12,7 @@ bool
 starts_with(std::string_view string, std::string_view beggining)
 {
   return string.size() >= beggining.size() &&
-    string.substr(0u, beggining.size() + 1u).compare(beggining) == 0;
+    string.substr(0u, beggining.size()).compare(beggining) == 0;
 }
 
 std::string
