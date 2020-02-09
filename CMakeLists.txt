@@ -122,6 +122,7 @@ add_executable(
     test/vn/path.cpp
     test/vn/string_template.cpp
     test/vn/string_utils.cpp
+    test/vn/string_conversions.cpp
 )
 
 target_link_libraries(
