@@ -3,6 +3,7 @@
 
 #include <string>
 #include <string_view>
+#include <vector>
 #include <vn/iterator_range.hpp>
 
 namespace vn {
@@ -14,7 +15,15 @@ replace_all(
   std::basic_string_view<T> input,
   std::basic_string_view<T> occurrences,
   std::basic_string_view<T> replacement);
-}
+
+template<typename T>
+std::vector<std::basic_string_view<T>>
+split(
+  std::basic_string_view<T> input,
+  std::basic_string_view<T> delimiter,
+  bool allow_empty);
+
+} // namespace detail
 
 template<typename... Args>
 std::string
@@ -48,6 +57,9 @@ replace_all(
   std::wstring_view input,
   std::wstring_view occurrences,
   std::wstring_view replacement);
+
+std::vector<std::string_view>
+split(std::string_view in, std::string_view separator, bool allow_empty = true);
 
 } // namespace vn
 

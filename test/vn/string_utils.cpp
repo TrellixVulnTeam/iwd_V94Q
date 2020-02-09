@@ -34,3 +34,25 @@ TEST_CASE("ends with", "[string_utils]")
   REQUIRE(vn::ends_with("", "ala") == false);
   REQUIRE(vn::ends_with("ala ma kota", "") == true);
 }
+
+TEST_CASE("string split", "[string_utils]")
+{
+  REQUIRE_THAT(
+    vn::split("abcd", ","), Catch::Equals<std::string_view>({ "abcd" }));
+  REQUIRE_THAT(
+    vn::split("a,b,c,d", ","),
+    Catch::Equals<std::string_view>({ "a", "b", "c", "d" }));
+  REQUIRE_THAT(
+    vn::split("a,,b,,c,,d", ",,"),
+    Catch::Equals<std::string_view>({ "a", "b", "c", "d" }));
+  REQUIRE_THAT(
+    vn::split(",a,b,c,d", ","),
+    Catch::Equals<std::string_view>({ "", "a", "b", "c", "d" }));
+  REQUIRE_THAT(
+    vn::split(",a,,b,c,d", ","),
+    Catch::Equals<std::string_view>({ "", "a", "", "b", "c", "d" }));
+  REQUIRE_THAT(vn::split(",", ","), Catch::Equals<std::string_view>({ "" }));
+  REQUIRE_THAT(
+    vn::split(",a,,b,c,d", ",", false),
+    Catch::Equals<std::string_view>({ "a", "b", "c", "d" }));
+}

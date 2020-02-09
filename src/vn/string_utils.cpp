@@ -78,4 +78,10 @@ replace_all(
     input, occurrences, replacement);
 }
 
+std::vector<std::string_view>
+split(std::string_view in, std::string_view separator, bool allow_empty)
+{
+  return detail::split(in, separator, allow_empty);
+}
+
 } // namespace vn

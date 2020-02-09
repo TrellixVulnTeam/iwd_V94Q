@@ -61,6 +61,32 @@ replace_all(
   return result;
 }
 
+template<typename T>
+std::vector<std::basic_string_view<T>>
+split(
+  std::basic_string_view<T> input,
+  std::basic_string_view<T> delimiter,
+  bool allow_empty)
+{
+  using string_t = std::basic_string<T>;
+  using string_view_t = std::basic_string_view<T>;
+  using size_type = typename string_view_t::size_type;
+
+  std::vector<std::basic_string_view<T>> result{};
+  for (size_type index = input.find(delimiter); index != string_t::npos;
+       index = input.find(delimiter)) {
+    const auto substr = input.substr(0u, index);
+    if (!substr.empty() || allow_empty) {
+      result.push_back(substr);
+    }
+    input = input.substr(index + delimiter.size());
+  }
+  if (!input.empty()) {
+    result.push_back(input);
+  }
+  return result;
+}
+
 } // namespace detail
 
 template<typename... Args>
