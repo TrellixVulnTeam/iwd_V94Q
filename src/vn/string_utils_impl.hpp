@@ -49,7 +49,9 @@ replace_all(
   using string_t = std::basic_string<T>;
   using string_view_t = std::basic_string_view<T>;
   using size_type = typename string_view_t::size_type;
-
+  if (occurrences.empty()) {
+    return string_t(input);
+  }
   string_t result(input);
   size_type index = result.find(occurrences, 0u);
   for (; index != string_t::npos; index = result.find(occurrences, index)) {
