@@ -1,5 +1,5 @@
-#ifndef IWD__CHECK_CALL_HPP
-#define IWD__CHECK_CALL_HPP
+#ifndef IWD__SUBPROCESS_HPP
+#define IWD__SUBPROCESS_HPP
 
 #include <chrono>
 #include <filesystem>

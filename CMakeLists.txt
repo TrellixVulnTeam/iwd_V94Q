@@ -65,7 +65,6 @@ add_library(
 add_executable(
     iwd
     src/main.cpp
-    src/iwd/check_call.cpp
     src/iwd/cmake_configuration.cpp
     src/iwd/directories.cpp
     src/iwd/domain.cpp
@@ -75,6 +74,7 @@ add_executable(
     src/iwd/git_clone.cpp
     src/iwd/parse_args.cpp
     src/iwd/requirements.cpp
+    src/iwd/subprocess.cpp
 )
 
 

@@ -2,9 +2,9 @@
 
 #include "download_file.hpp"
 #include "git_clone.hpp"
-#include "iwd/check_call.hpp"
 #include "iwd/extract_tarfile.hpp"
 #include "iwd/logging.hpp"
+#include "iwd/subprocess.hpp"
 #include <vn/file.hpp>
 #include <vn/string_utils.hpp>
 
