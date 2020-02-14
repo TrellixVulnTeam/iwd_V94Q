@@ -18,6 +18,30 @@ to_boost_path(const std::filesystem::path& path)
 }
 
 void
+wait_process_finished(
+  const std::string& app_name,
+  bp::child& proc,
+  const subprocess_arguments& args)
+{
+  if (args.timeout) {
+    if (!proc.wait_for(args.timeout.value())) {
+      throw std::runtime_error(
+        vn::make_message("Timeout while calling", std::quoted(app_name)));
+    }
+  } else {
+    proc.wait();
+  }
+
+  if (proc.exit_code() != 0) {
+    throw std::runtime_error(vn::make_message(
+      "Process",
+      std::quoted(app_name),
+      "exited with status",
+      proc.exit_code()));
+  }
+}
+
+void
 check_call(
   const std::string& app_name,
   const boost::filesystem::path& executable_path,
@@ -35,22 +59,7 @@ check_call(
     bp::std_err > stderr,
     bp::std_in < stdin);
 
-  if (args.timeout) {
-    if (!proc.wait_for(args.timeout.value())) {
-      throw std::runtime_error(
-        vn::make_message("Timeout while calling", std::quoted(app_name)));
-    }
-  } else {
-    proc.wait();
-  }
-
-  if (proc.exit_code() != 0) {
-    throw std::runtime_error(vn::make_message(
-      "Process",
-      std::quoted(app_name),
-      "exited with status",
-      proc.exit_code()));
-  }
+  wait_process_finished(app_name, proc, args);
 }
 
 } // namespace
