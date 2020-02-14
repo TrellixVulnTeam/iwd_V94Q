@@ -22,7 +22,7 @@ check_call(
   const std::string& app_name,
   const boost::filesystem::path& executable_path,
   const std::vector<std::string>& proc_args,
-  const check_call_arguments& args)
+  const subprocess_arguments& args)
 {
   const auto working_directory = to_boost_path(
     args.working_directory.value_or(vn::directory::current()).path());
@@ -59,7 +59,7 @@ void
 check_call(
   const std::string& app_name,
   const std::vector<std::string>& proc_args,
-  const check_call_arguments& args)
+  const subprocess_arguments& args)
 {
   const auto executable_path = bp::search_path(app_name);
   if (executable_path.empty()) {
@@ -73,7 +73,7 @@ void
 check_call(
   const std::filesystem::path& app_path,
   const std::vector<std::string>& proc_args,
-  const check_call_arguments& args)
+  const subprocess_arguments& args)
 {
   if (!std::filesystem::exists(app_path)) {
     throw std::runtime_error(

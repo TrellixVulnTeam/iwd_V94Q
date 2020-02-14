@@ -15,7 +15,7 @@ struct executable
   explicit executable(const std::filesystem::path& path);
   void run(
     const std::vector<std::string>& proc_args = {},
-    const check_call_arguments& args = {}) const;
+    const subprocess_arguments& args = {}) const;
 
 private:
   std::filesystem::path _executable_path;

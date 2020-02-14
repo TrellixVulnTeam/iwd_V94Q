@@ -15,7 +15,7 @@ executable::executable(const std::filesystem::path& path)
 void
 executable::run(
   const std::vector<std::string>& proc_args,
-  const check_call_arguments& args) const
+  const subprocess_arguments& args) const
 {
   check_call(_executable_path, proc_args, args);
 }
