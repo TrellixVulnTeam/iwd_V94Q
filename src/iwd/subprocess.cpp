@@ -4,6 +4,7 @@
 #include <boost/process/search_path.hpp>
 #include <chrono>
 #include <iomanip>
+#include <iterator>
 #include <vn/string_utils.hpp>
 
 namespace iwd {
@@ -62,6 +63,12 @@ check_call(
   wait_process_finished(app_name, proc, args);
 }
 
+std::string
+stream_to_string(bp::ipstream& stream)
+{
+  return std::string(std::istreambuf_iterator<char>(stream), {});
+}
+
 } // namespace
 
 void
@@ -90,6 +97,29 @@ check_call(
   }
   return check_call(
     app_path.filename(), to_boost_path(app_path), proc_args, args);
+}
+
+std::string
+check_output(
+  const std::filesystem::path& app_path,
+  const std::vector<std::string>& proc_args,
+  const subprocess_arguments& args)
+{
+  const auto working_directory = to_boost_path(
+    args.working_directory.value_or(vn::directory::current()).path());
+
+  bp::ipstream out;
+
+  bp::child proc(
+    to_boost_path(app_path),
+    bp::args(proc_args),
+    bp::start_dir(working_directory),
+    bp::std_out > out,
+    bp::std_err > stderr,
+    bp::std_in < stdin);
+
+  wait_process_finished(app_path.filename(), proc, args);
+  return stream_to_string(out);
 }
 
 } // namespace iwd

@@ -28,6 +28,12 @@ check_call(
   const std::vector<std::string>& proc_args,
   const subprocess_arguments& args = {});
 
+std::string
+check_output(
+  const std::filesystem::path& app_path,
+  const std::vector<std::string>& proc_args,
+  const subprocess_arguments& args = {});
+
 } // namespace iwd
 
 #endif
