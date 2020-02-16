@@ -66,6 +66,7 @@ add_executable(
     iwd
     src/main.cpp
     src/iwd/cmake_configuration.cpp
+    src/iwd/cmake_program.cpp
     src/iwd/directories.cpp
     src/iwd/domain.cpp
     src/iwd/download_file.cpp

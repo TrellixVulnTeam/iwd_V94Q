@@ -4,7 +4,7 @@ namespace iwd {
 
 domain::domain(const vn::directory& iwd_directory)
   : _directories(iwd_directory.path())
-  , _cmake(find_executable_or_throw("cmake"))
+  , _cmake(iwd::cmake::create(find_executable_or_throw("cmake")))
   , _git(find_executable_or_throw("git"))
 {}
 
@@ -14,7 +14,7 @@ domain::dirs() const noexcept
   return _directories;
 }
 
-const executable&
+const cmake&
 domain::cmake() const noexcept
 {
   return _cmake;
