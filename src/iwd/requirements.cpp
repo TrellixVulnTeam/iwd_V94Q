@@ -113,7 +113,6 @@ requirement_handler::configure(const iwd::cmake_configuration& root)
   const auto config =
     cmake_configuration(_requirement.get_configuration()).override_with(root);
 
-  const auto proc_args = config.as_cmake_args();
   const auto build_path =
     _domain.dirs().build_directory().path() / name_version(_requirement);
 
@@ -132,14 +131,8 @@ requirement_handler::configure(const iwd::cmake_configuration& root)
     ? _source_directory->path() / *_requirement.get_cmake_directory()
     : _source_directory->path();
 
-  auto args =
-    make_args("-S", cmake_source_directory, "-B", _build_directory->path());
-  args.insert(args.end(), proc_args.begin(), proc_args.end());
-
-  info(
-    "cmake {}",
-    vn::join_range(" ", vn::make_iterator_range(args.begin(), args.end())));
-  _domain.cmake().check_call(args);
+  _domain.cmake().configure(
+    vn::directory(cmake_source_directory), *_build_directory, config);
 }
 
 void
@@ -148,13 +141,7 @@ requirement_handler::install()
   if (!is_cmake_build()) {
     return;
   }
-  const auto args = make_args(
-    "--build", _build_directory->path().string(), "--target", "install");
-
-  info(
-    "cmake {}",
-    vn::join_range(" ", vn::make_iterator_range(args.begin(), args.end())));
-  _domain.cmake().check_call(args);
+  _domain.cmake().install(*_build_directory);
 }
 
 bool

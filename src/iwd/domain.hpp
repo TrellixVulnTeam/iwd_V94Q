@@ -1,7 +1,7 @@
 #ifndef IWD__DOMAIN_HPP
 #define IWD__DOMAIN_HPP
 
-#include <iwd/cmake.hpp>
+#include <iwd/cmake_program.hpp>
 #include <iwd/directories.hpp>
 #include <iwd/executable.hpp>
 #include <memory>
@@ -14,12 +14,12 @@ struct domain
   explicit domain(const vn::directory& iwd_directory);
 
   const directories& dirs() const noexcept;
-  const cmake& cmake() const noexcept;
+  const cmake_program& cmake() const noexcept;
   const executable& git() const noexcept;
 
 private:
   directories _directories;
-  iwd::cmake _cmake;
+  cmake_program _cmake;
   executable _git;
 };
 
