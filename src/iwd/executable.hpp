@@ -17,6 +17,10 @@ struct executable
     const std::vector<std::string>& proc_args = {},
     const subprocess_arguments& args = {}) const;
 
+  std::string check_output(
+    const std::vector<std::string>& proc_args = {},
+    const subprocess_arguments& args = {}) const;
+
 private:
   std::filesystem::path _executable_path;
 };

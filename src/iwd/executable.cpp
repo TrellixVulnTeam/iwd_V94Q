@@ -20,6 +20,14 @@ executable::check_call(
   iwd::check_call(_executable_path, proc_args, args);
 }
 
+std::string
+executable::check_output(
+  const std::vector<std::string>& proc_args,
+  const subprocess_arguments& args) const
+{
+  return iwd::check_output(_executable_path, proc_args, args);
+}
+
 std::optional<executable>
 try_find_executable(
   const std::string& name,
