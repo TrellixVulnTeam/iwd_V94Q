@@ -13,7 +13,7 @@ namespace iwd {
 struct executable
 {
   explicit executable(const std::filesystem::path& path);
-  void run(
+  void check_call(
     const std::vector<std::string>& proc_args = {},
     const subprocess_arguments& args = {}) const;
 

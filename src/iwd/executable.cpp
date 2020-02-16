@@ -13,11 +13,11 @@ executable::executable(const std::filesystem::path& path)
 {}
 
 void
-executable::run(
+executable::check_call(
   const std::vector<std::string>& proc_args,
   const subprocess_arguments& args) const
 {
-  check_call(_executable_path, proc_args, args);
+  iwd::check_call(_executable_path, proc_args, args);
 }
 
 std::optional<executable>
