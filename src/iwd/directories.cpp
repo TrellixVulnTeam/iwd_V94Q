@@ -19,7 +19,7 @@ create_dir_in(const vn::directory& dir, const std::string_view& name)
 } // namespace
 
 directories::directories(const std::filesystem::path& working_directory)
-  : _working_directory(vn::directory::create(working_directory))
+  : _working_directory(vn::directory::create(working_directory / ".iwd"))
   , _cache_directory(create_dir_in(_working_directory, cache_dir_name))
   , _build_directory(create_dir_in(_working_directory, build_dir_name))
   , _source_directory(create_dir_in(_working_directory, source_dir_name))
