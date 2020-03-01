@@ -53,6 +53,7 @@ find_package(CURL REQUIRED)
 add_library(
     vn
     src/vn/directory.cpp
+    src/vn/error.cpp
     src/vn/file.cpp
     src/vn/fnmatch.cpp
     src/vn/string_utils.cpp
