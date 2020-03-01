@@ -9,6 +9,18 @@ namespace vn {
 std::string
 read_whole_file(const std::filesystem::path& file_path)
 {
+  std::error_code ec;
+  if (auto v = read_whole_file(file_path, ec); v) {
+    return *v;
+  }
+  throw std::system_error(ec);
+}
+
+std::optional<std::string>
+read_whole_file(
+  const std::filesystem::path& file_path,
+  std::error_code& ec) noexcept
+{
   std::FILE* fp = std::fopen(file_path.c_str(), "rb");
   if (fp) {
     std::string contents;
@@ -19,7 +31,8 @@ read_whole_file(const std::filesystem::path& file_path)
     std::fclose(fp);
     return contents;
   }
-  throw std::system_error(vn::errno_as_error_code());
+  ec = vn::errno_as_error_code();
+  return std::nullopt;
 }
 
 void
