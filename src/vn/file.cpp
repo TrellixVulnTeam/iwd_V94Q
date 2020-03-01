@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <streambuf>
+#include <vn/error.hpp>
 
 namespace vn {
 
@@ -18,7 +19,7 @@ read_whole_file(const std::filesystem::path& file_path)
     std::fclose(fp);
     return contents;
   }
-  throw std::system_error(std::error_code(errno, std::system_category()));
+  throw std::system_error(vn::errno_as_error_code());
 }
 
 void
@@ -33,7 +34,7 @@ create_text_file(
     std::fclose(fp);
     return;
   }
-  throw std::system_error(std::error_code(errno, std::system_category()));
+  throw std::system_error(vn::errno_as_error_code());
 }
 
 } // namespace vn
