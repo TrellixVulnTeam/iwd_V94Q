@@ -142,4 +142,11 @@ set_target_properties(
     CXX_STANDARD 17
 )
 
+install(
+    TARGETS
+        iwd
+    RUNTIME
+        DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
 ParseAndAddCatchTests(vn-tests)

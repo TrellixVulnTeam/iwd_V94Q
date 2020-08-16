@@ -22,6 +22,7 @@ struct requirement_handler
 
   void source();
   void configure(const iwd::cmake_configuration& configuration);
+  void patch();
   void install();
 
 private:

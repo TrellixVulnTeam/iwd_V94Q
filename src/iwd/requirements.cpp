@@ -109,7 +109,6 @@ requirement_handler::source()
 void
 requirement_handler::configure(const iwd::cmake_configuration& root)
 {
-
   const auto config =
     cmake_configuration(_requirement.get_configuration()).override_with(root);
 
@@ -133,6 +132,16 @@ requirement_handler::configure(const iwd::cmake_configuration& root)
 
   _domain.cmake().configure(
     vn::directory(cmake_source_directory), *_build_directory, config);
+}
+
+void
+requirement_handler::patch()
+{
+  if (auto patches = _requirement.get_patch(); patches) {
+    for (auto& patch : *patches) {
+      patch.get_type();
+    }
+  }
 }
 
 void
